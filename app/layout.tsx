@@ -1,36 +1,40 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
   subsets: ['latin'],
+  weight: ['400', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ['latin'],
+  weight: ['400', '600'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
   title: 'CookedResume.in - The Indian Tech Resume & GitHub Roaster',
   description:
-    'Find out how badly you are cooked before the 3.2 LPA mass recruiter, Bengaluru startup CTO, FAANG Bhaiya, or Placement Cell HOD rejects you. High-contrast viral scorecard with STAR resume bullet rewrites.',
+    'Select a brutal AI persona and get a reality check on your tech career. 100% Client-Side PDF parsing with instant scorecard generation.',
   keywords: [
+    'CookedResume.in',
     'Indian tech resume roast',
-    'GitHub profile roaster',
-    'Tier-3 resume roast',
-    '3.2 LPA mass recruiter',
-    'Bengaluru startup CTO roast',
-    'FAANG bhaiya didi',
-    'STAR resume bullet rewrite',
-    'CookedResume',
+    'Figma UI tech resume',
+    'Mass Recruiter HR',
+    'Bengaluru Startup CTO',
+    'FAANG Tech Lead',
+    'Placement HOD',
+    '3.2 LPA WITCH',
   ],
   authors: [{ name: 'CookedResume.in' }],
   openGraph: {
-    title: 'CookedResume.in - The Indian Tech Resume & GitHub Roaster',
+    title: 'CookedResume.in - Is Your Tech Resume Cooked?',
     description:
-      'Upload your PDF resume or enter your GitHub. Get roasted by Indian tech personas and download your viral Spotify Wrapped style scorecard.',
+      'Select a brutal AI persona and get a reality check on your tech career. 100% Client-Side PDF Parsing.',
     type: 'website',
   },
 };
@@ -43,9 +47,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${inter.variable} ${ibmPlexMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#07080d] text-zinc-100 selection:bg-orange-500 selection:text-white">
+      <body className="min-h-full flex flex-col bg-[#09090B] bg-zinc-950 text-neutral-50 selection:bg-orange-500 selection:text-white">
         {children}
       </body>
     </html>

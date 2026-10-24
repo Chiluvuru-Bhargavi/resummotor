@@ -106,9 +106,10 @@ RECENT & TOP REPOSITORIES:
 export const PRESET_SAMPLE_ROASTS: Record<PersonaId, RoastResult> = {
   'mass-recruiter': {
     cookedPercentage: 88,
-    verdictTitle: "Certified Mass Recruiter Day-1 Candidate",
-    predictedPackage: "₹3.36 LPA (with 2-year service bond & 90-day notice)",
-    roastSummary: "Dear Candidate, kindly note that while your career objective is straight out of a 2008 engineering template, your 71.4% in 12th board just barely escapes our automated Excel filter. We appreciate that you included MS Word and Turbo C++ under Technical Skills, which confirms you are emotionally prepared to maintain our legacy banking system from 1999 while waiting in the Hinjewadi cafeteria for your 3.2 LPA CTC breakdown email.",
+    verdictBadge: "MASS RECRUITER BAIT",
+    predictedCTC: "₹3.36 LPA (2-Yr Bond)",
+    delusionLevel: "EXTREME",
+    roastParagraph: "Dear Candidate, kindly note that your career objective is straight out of a 2008 engineering template. Your 71.4% in 12th board just barely escapes our automated Excel filter. We appreciate that you included MS Word and Turbo C++ under Technical Skills, which confirms you are emotionally prepared to maintain our legacy banking system from 1999 while waiting in the Hinjewadi cafeteria for your CTC breakdown email.",
     redFlags: [
       "Still listing Turbo C++ and MS Office as hardcore technical competencies in 2026.",
       "Major project is a C++ console Library Management System using text files instead of an actual database.",
@@ -116,32 +117,36 @@ export const PRESET_SAMPLE_ROASTS: Record<PersonaId, RoastResult> = {
     ],
     greenFlags: [
       "Cleared both 4th semester backlogs on the first re-attempt, showing true tier-3 survival resilience.",
-      "Has a 5-star HackerRank problem solving badge, which our aptitude test screening portal respects."
+      "Has a 5-star HackerRank badge which barely survives our initial aptitude screening test."
     ],
-    bulletRewrites: [
+    bulletFixes: [
       {
-        original: "Developed a console-based software application to issue, return, and search books in a college library using file handling.",
-        fixed: "Architected a C++ library inventory engine supporting 1,000+ catalog items with persistent file I/O and O(log n) binary search lookup.",
-        whyItWorks: "Replaces student lab terminology with engineering specifications, data volume, and algorithmic complexity."
+        weakOriginal: "Developed a console-based software application to issue, return, and search books in a college library using file handling.",
+        strongRewrite: "Architected a C++ library inventory engine supporting 1,000+ catalog items with persistent file I/O and O(log n) binary search lookup.",
+        reason: "Replaces student lab terminology with engineering specifications, data volume, and algorithmic complexity."
       },
       {
-        original: "Connected with OpenWeather free API to fetch live temperature and humidity of any city entered by user.",
-        fixed: "Built an asynchronous React weather dashboard integrating OpenWeatherMap REST API with client-side caching and dynamic SVG weather states.",
-        whyItWorks: "Highlights asynchronous state management, network optimization, and modern frontend design principles instead of a basic API fetch."
+        weakOriginal: "Connected with OpenWeather free API to fetch live temperature and humidity of any city entered by user.",
+        strongRewrite: "Built an asynchronous React weather dashboard integrating OpenWeatherMap REST API with client-side caching and dynamic SVG weather states.",
+        reason: "Highlights asynchronous state management, network optimization, and modern frontend design principles instead of a basic API fetch."
       },
       {
-        original: "Active Member of College Cultural Fest Technical Organizing Committee (handled mic and projector setup).",
-        fixed: "Spearheaded technical operations and AV streaming infrastructure for annual 3-day college festival hosting 2,500+ attendees.",
-        whyItWorks: "Transforms mundane AV setup duties into event-scale operational leadership with tangible attendance metrics."
+        weakOriginal: "Active Member of College Cultural Fest Technical Organizing Committee (handled mic and projector setup).",
+        strongRewrite: "Spearheaded technical operations and AV streaming infrastructure for annual 3-day college festival hosting 2,500+ attendees.",
+        reason: "Transforms mundane AV setup duties into event-scale operational leadership with tangible attendance metrics."
       }
-    ]
+    ],
+    verdictTitle: "Mass Recruiter Day-1 Bait",
+    predictedPackage: "₹3.36 LPA (2-Yr Bond)",
+    roastSummary: "Dear Candidate, kindly note that your career objective is straight out of a 2008 engineering template. Your 71.4% in 12th board just barely escapes our automated Excel filter. We appreciate that you included MS Word and Turbo C++ under Technical Skills, which confirms you are emotionally prepared to maintain our legacy banking system from 1999.",
   },
 
   'startup-cto': {
     cookedPercentage: 94,
-    verdictTitle: "Chronically Trapped in YouTube Tutorial Hell",
-    predictedPackage: "₹4.5 LPA + 0.0001% phantom ESOPs (Indiranagar beanbag included)",
-    roastSummary: "Bro, with all due respect, looking at your project portfolio gave my Redis cluster a segmentation fault. You have built the Holy Trinity of unhireable tier-3 resumes: a React Calculator, a Weather App that wraps a single GET request, and a C++ Library Management System that writes plaintext to a TXT file like it's 1994. In Koramangala, we don't care about your 10-hour Udemy Python certificate; we care if you can handle 50,000 concurrent webhooks without crashing the Node.js event loop.",
+    verdictBadge: "CERTIFIED TUTORIAL HELL",
+    predictedCTC: "₹4.5 LPA + Beanbag",
+    delusionLevel: "EXTREME",
+    roastParagraph: "Bro, with all due respect, looking at your project portfolio gave my Redis cluster a segmentation fault. You have built the Holy Trinity of unhireable tier-3 resumes: a React Calculator, a Weather App that wraps a single GET request, and a C++ Library Management System that writes plaintext to a TXT file like it's 1994. In Koramangala, we don't care about your 10-hour Udemy Python certificate; we care if you can handle 50,000 concurrent webhooks without crashing the Node.js event loop.",
     redFlags: [
       "The 'Major Project' uses Turbo C++ file handling for data persistence in an era of distributed key-value stores.",
       "Built a calculator in React and proudly claimed 100% responsive design as an architectural triumph.",
@@ -151,30 +156,34 @@ export const PRESET_SAMPLE_ROASTS: Record<PersonaId, RoastResult> = {
       "At least you didn't call yourself an 'AI Thought Leader' after using ChatGPT to write your career objective.",
       "Has experience with Git, Postman, and basic component architecture."
     ],
-    bulletRewrites: [
+    bulletFixes: [
       {
-        original: "Built a calculator that can perform addition, subtraction, multiplication, and division operations smoothly without crashing.",
-        fixed: "Engineered an expression-evaluating calculator engine in React with zero-runtime edge-case handling for division-by-zero and floating-point precision.",
-        whyItWorks: "Focuses on runtime edge cases and mathematical precision instead of boasting that basic arithmetic didn't crash."
+        weakOriginal: "Built a calculator that can perform addition, subtraction, multiplication, and division operations smoothly without crashing.",
+        strongRewrite: "Engineered an expression-evaluating calculator engine in React with zero-runtime edge-case handling for division-by-zero and floating-point precision.",
+        reason: "Focuses on runtime edge cases and mathematical precision instead of boasting that basic arithmetic didn't crash."
       },
       {
-        original: "Connected with OpenWeather free API to fetch live temperature and humidity of any city entered by user.",
-        fixed: "Implemented a debounced geolocation weather client with HTTP status error boundaries and localized localStorage caching reducing API overhead by 60%.",
-        whyItWorks: "Demonstrates production engineering concepts: debouncing, defensive error boundaries, and client caching."
+        weakOriginal: "Connected with OpenWeather free API to fetch live temperature and humidity of any city entered by user.",
+        strongRewrite: "Implemented a debounced geolocation weather client with HTTP status error boundaries and localized localStorage caching reducing API overhead by 60%.",
+        reason: "Demonstrates production engineering concepts: debouncing, defensive error boundaries, and client caching."
       },
       {
-        original: "Created exact clone of Netflix homepage hero banner and movie poster carousels.",
-        fixed: "Engineered a high-performance Netflix web interface clone featuring lazy-loaded image carousels, responsive grid breakpoints, and modular CSS architecture.",
-        whyItWorks: "Emphasizes performance optimizations like lazy loading and responsive architectural patterns over passive cloning."
+        weakOriginal: "Created exact clone of Netflix homepage hero banner and movie poster carousels.",
+        strongRewrite: "Engineered a high-performance Netflix web interface clone featuring lazy-loaded image carousels, responsive grid breakpoints, and modular CSS architecture.",
+        reason: "Emphasizes performance optimizations like lazy loading and responsive architectural patterns over passive cloning."
       }
-    ]
+    ],
+    verdictTitle: "Certified Tutorial Hell Resident",
+    predictedPackage: "₹4.5 LPA + Beanbag",
+    roastSummary: "Bro, with all due respect, looking at your project portfolio gave my Redis cluster a segmentation fault. You have built the Holy Trinity of unhireable tier-3 resumes: a React Calculator, a Weather App that wraps a single GET request, and a C++ Library Management System.",
   },
 
   'faang-bhaiya': {
     cookedPercentage: 86,
-    verdictTitle: "DSA Sheet Procrastinator & Metric-Free SDE",
-    predictedPackage: "₹6 LPA off-campus or ₹45 LPA in YouTube thumbnail dreams",
-    roastSummary: "Arre bhaiya/didi, what is this career objective? 'To work in a challenging and competitive environment...' Did you copy this from a 2012 GeeksforGeeks placement article? Where is your STAR format? Where are the quantitative metrics? You put 'Proficient in C and C++' but there is no mention of your LeetCode contest rating, no graph traversals, and your final year project is running in a terminal. Even my Telegram group members with 3-month gaps write better impact-driven bullets.",
+    verdictBadge: "ZERO STAR METRICS",
+    predictedCTC: "₹6 LPA (Off-Campus)",
+    delusionLevel: "HIGH",
+    roastParagraph: "Arre bhaiya/didi, what is this career objective? 'To work in a challenging and competitive environment...' Did you copy this from a 2012 GeeksforGeeks placement article? Where is your STAR format? Where are the quantitative metrics? You put 'Proficient in C and C++' but there is no mention of your LeetCode contest rating, no graph traversals, and your final year project is running in a terminal. Even my Telegram group members write better impact-driven bullets.",
     redFlags: [
       "Zero quantified metrics: no latency numbers, no user count, no database benchmark numbers.",
       "No mention of LeetCode contest rating or GitHub contribution streaks, just an ancient HackerRank bronze badge.",
@@ -184,30 +193,34 @@ export const PRESET_SAMPLE_ROASTS: Record<PersonaId, RoastResult> = {
       "Strong foundation in C/C++ OOP fundamentals which makes grinding graph & tree algorithms much faster.",
       "Consistent academic record with progressive improvement after 4th semester."
     ],
-    bulletRewrites: [
+    bulletFixes: [
       {
-        original: "Developed a console-based software application to issue, return, and search books in a college library.",
-        fixed: "Designed and implemented an OOP-driven library management system in C++, reducing book checkout latency by 40% using custom hashing algorithms.",
-        whyItWorks: "Applies the FAANG STAR format with measurable latency reduction and explicit algorithmic implementation."
+        weakOriginal: "Developed a console-based software application to issue, return, and search books in a college library.",
+        strongRewrite: "Designed and implemented an OOP-driven library management system in C++, reducing book checkout latency by 40% using custom hashing algorithms.",
+        reason: "Applies the FAANG STAR format with measurable latency reduction and explicit algorithmic implementation."
       },
       {
-        original: "Connected with OpenWeather free API to fetch live temperature and humidity of any city entered by user.",
-        fixed: "Built an interactive weather forecast application serving real-time meteorological metrics across 200+ cities with sub-300ms API response handling.",
-        whyItWorks: "Introduces scale (200+ cities) and quantified service-level performance targets (sub-300ms)."
+        weakOriginal: "Connected with OpenWeather free API to fetch live temperature and humidity of any city entered by user.",
+        strongRewrite: "Built an interactive weather forecast application serving real-time meteorological metrics across 200+ cities with sub-300ms API response handling.",
+        reason: "Introduces scale (200+ cities) and quantified service-level performance targets (sub-300ms)."
       },
       {
-        original: "Class Representative for Section B during 3rd year.",
-        fixed: "Elected Class Representative representing 70+ engineering students; coordinated academic schedules with faculty and resolved 15+ departmental issues.",
-        whyItWorks: "Quantifies the cohort size (70+) and operational output, proving tangible leadership credibility."
+        weakOriginal: "Class Representative for Section B during 3rd year.",
+        strongRewrite: "Elected Class Representative representing 70+ engineering students; coordinated academic schedules with faculty and resolved 15+ departmental issues.",
+        reason: "Quantifies the cohort size (70+) and operational output, proving tangible leadership credibility."
       }
-    ]
+    ],
+    verdictTitle: "Zero STAR Metric Syndrome",
+    predictedPackage: "₹6 LPA (Off-Campus)",
+    roastSummary: "Arre bhaiya/didi, what is this career objective? Where is your STAR format? Where are the quantitative metrics? You put 'Proficient in C and C++' but there is no mention of your LeetCode contest rating, no graph traversals.",
   },
 
   'placement-hod': {
     cookedPercentage: 92,
-    verdictTitle: "Debarred from Day-1 Campus Recruitment",
-    predictedPackage: "₹2.8 LPA (TPO Special Off-Campus Referral)",
-    roastSummary: "Mr. Rahul Sharma, Section B. First of all, who authorized this non-standard resume font? Training and Placement Cell circular #42 clearly instructed Times New Roman 12-point format with 1-inch margins! You have mentioned 2 backlogs in 4th semester—do you think the visiting Japanese MNC panel will applaud your backlog clearing ceremony? Furthermore, handling the mic and projector in the cultural fest does NOT count as technical leadership. Report to Room 102 tomorrow in formal black trousers and tie or face immediate debarment!",
+    verdictBadge: "DEBARRED FROM DAY 1",
+    predictedCTC: "₹2.8 LPA (Special Referral)",
+    delusionLevel: "EXTREME",
+    roastParagraph: "Mr. Rahul Sharma, Section B. First of all, who authorized this non-standard resume font? Training and Placement Cell circular #42 clearly instructed Times New Roman 12-point format with 1-inch margins! You have mentioned 2 backlogs in 4th semester—do you think the visiting Japanese MNC panel will applaud your backlog clearing ceremony? Furthermore, handling the mic and projector in the cultural fest does NOT count as technical leadership. Report to Room 102 tomorrow in formal black trousers and tie or face immediate debarment!",
     redFlags: [
       "Career objective is 100% copied from previous year's passed-out seniors' placement file.",
       "Cleared 2 backlogs in 4th semester which violates the strict Day-1 dream company zero-history criteria.",
@@ -217,22 +230,25 @@ export const PRESET_SAMPLE_ROASTS: Record<PersonaId, RoastResult> = {
       "Passed 10th and 12th board exams with >70% aggregate, which barely saves you from Day-0 Mass Recruiter rejection.",
       "Maintained above 75% attendance criteria in final year labs."
     ],
-    bulletRewrites: [
+    bulletFixes: [
       {
-        original: "Active Member of College Cultural Fest Technical Organizing Committee (handled mic and projector setup).",
-        fixed: "Managed technical stage systems and audio-visual hardware operations for college annual symposium with 2,000+ registered attendees.",
-        whyItWorks: "Presents institutional event management formally and avoids sounding like an amateur lab assistant."
+        weakOriginal: "Active Member of College Cultural Fest Technical Organizing Committee (handled mic and projector setup).",
+        strongRewrite: "Managed technical stage systems and audio-visual hardware operations for college annual symposium with 2,000+ registered attendees.",
+        reason: "Presents institutional event management formally and avoids sounding like an amateur lab assistant."
       },
       {
-        original: "Developed a console-based software application to issue, return, and search books in a college library.",
-        fixed: "Engineered a digitized library record management system in C++ automating manual register workflows for 500+ daily departmental transactions.",
-        whyItWorks: "Positions the academic project as a formal institutional automation workflow."
+        weakOriginal: "Developed a console-based software application to issue, return, and search books in a college library.",
+        strongRewrite: "Engineered a digitized library record management system in C++ automating manual register workflows for 500+ daily departmental transactions.",
+        reason: "Positions the academic project as a formal institutional automation workflow."
       },
       {
-        original: "Completed 2-Day National Level Workshop on 'Generative AI and ChatGPT' conducted by IITian trainers.",
-        fixed: "Certified participant in National Technical Workshop on Generative AI Architectures and Prompt Engineering methodologies.",
-        whyItWorks: "Removes informal 'IITian trainers' phrase and presents technical workshop training with professional rigor."
+        weakOriginal: "Completed 2-Day National Level Workshop on 'Generative AI and ChatGPT' conducted by IITian trainers.",
+        strongRewrite: "Certified participant in National Technical Workshop on Generative AI Architectures and Prompt Engineering methodologies.",
+        reason: "Removes informal 'IITian trainers' phrase and presents technical workshop training with professional rigor."
       }
-    ]
+    ],
+    verdictTitle: "Notice of Debarment Issued by TPO",
+    predictedPackage: "₹2.8 LPA (Special Referral)",
+    roastSummary: "Mr. Rahul Sharma, Section B. First of all, who authorized this non-standard resume font? Training and Placement Cell circular #42 clearly instructed Times New Roman 12-point format with 1-inch margins! You have mentioned 2 backlogs in 4th semester.",
   }
 };

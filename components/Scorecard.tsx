@@ -1,30 +1,23 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
 import { RoastResult, PersonaId } from '@/lib/types';
 import { PERSONAS } from '@/lib/personas';
 import {
   Flame,
   Download,
   Copy,
-  CheckCircle,
-  RefreshCw,
-  GitPullRequest,
-  GitCommit,
   Check,
   Share2,
   FileCode2,
   Sparkles,
-  TrendingDown,
-  AlertOctagon,
   MessageCircle,
-  ExternalLink,
   Loader2,
+  RefreshCw,
+  GitPullRequest,
 } from 'lucide-react';
 import { TwitterXIcon } from '@/components/BrandIcons';
-import confetti from 'canvas-confetti';
-import { toPng } from 'html-to-image';
+import { generateScorecardCanvasPng } from '@/lib/canvas-scorecard';
 
 interface ScorecardProps {
   roast: RoastResult;
@@ -33,105 +26,86 @@ interface ScorecardProps {
 }
 
 export function Scorecard({ roast, onReRoastWithPersona, onReset }: ScorecardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
-  const [copiedBulletIdx, setCopiedBulletIdx] = useState<number | null>(null);
-  const [copiedShareLink, setCopiedShareLink] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const currentPersona = PERSONAS[roast.personaId || 'mass-recruiter'];
-
-  // Calculate delusion level
-  const getDelusionLevel = (score: number) => {
-    if (score >= 90) return 'TERMINAL';
-    if (score >= 80) return 'EXTREME';
-    if (score >= 70) return 'VERY HIGH';
-    return 'ELEVATED';
-  };
-
-  const delusionLevel = getDelusionLevel(roast.cookedPercentage);
 
   // SVG Progress Ring calculations
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (roast.cookedPercentage / 100) * circumference;
 
-  useEffect(() => {
-    try {
-      confetti({
-        particleCount: 50,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#F97316', '#EF4444', '#EAB308', '#10B981'],
-      });
-    } catch {
-      // Ignore
-    }
-  }, [roast]);
-
-  // Export card as PNG using html-to-image
-  const handleDownloadImage = async () => {
-    if (!cardRef.current) return;
+  // Native HTML5 Canvas Scorecard Download
+  const handleDownloadCanvasPng = async () => {
     setIsExporting(true);
-
     try {
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      const dataUrl = await toPng(cardRef.current, {
-        cacheBust: true,
-        pixelRatio: 2.5,
-        backgroundColor: '#09090b',
-      });
+      const dataUrl = await generateScorecardCanvasPng(
+        roast,
+        currentPersona.name,
+        roast.targetName || 'Desi Candidate'
+      );
 
       const link = document.createElement('a');
-      link.download = `CookedScorecard-${roast.targetName || 'DesiDev'}-${Date.now()}.png`;
+      link.download = `CookedScorecard-${roast.targetName || 'Roast'}-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
-      console.error('Failed to export scorecard PNG:', err);
-      alert('Could not export image. Please try taking a screenshot or try again.');
+      console.error('Canvas export error:', err);
+      alert('Could not generate canvas image. Please try taking a screenshot.');
     } finally {
       setIsExporting(false);
     }
   };
 
-  // Share handlers
-  const shareMessage = `I just got roasted on CookedResume.in! 🔥\nScore: ${roast.cookedPercentage}% COOKED (${roast.verdictTitle})\nPredicted CTC: ${roast.predictedPackage}\nDelusion Level: ${delusionLevel}\nRoast yours at: https://cookedresume.in`;
+  const shareText = `My tech resume is ${roast.cookedPercentage}% COOKED! 🔥\nVerdict: "${roast.verdictBadge || roast.verdictTitle}"\nPredicted CTC: ${roast.predictedCTC || roast.predictedPackage}\nDelusion Level: ${roast.delusionLevel}\nCheck yours at: https://cookedresume.in`;
 
   const handleShareWhatsApp = () => {
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
   };
 
   const handleShareReddit = () => {
-    const title = `My resume is ${roast.cookedPercentage}% COOKED according to CookedResume.in (${roast.verdictTitle})`;
+    const title = `My resume is ${roast.cookedPercentage}% COOKED according to CookedResume.in (${roast.verdictBadge || roast.verdictTitle})`;
     window.open(`https://reddit.com/submit?title=${encodeURIComponent(title)}&url=${encodeURIComponent('https://cookedresume.in')}`, '_blank');
   };
 
   const handleShareTwitter = () => {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}`, '_blank');
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank');
   };
 
-  const handleCopyBullet = (text: string, idx: number) => {
+  const handleCopyRewrite = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
-    setCopiedBulletIdx(idx);
-    setTimeout(() => setCopiedBulletIdx(null), 2000);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
   };
+
+  const bulletItems = roast.bulletFixes && roast.bulletFixes.length > 0
+    ? roast.bulletFixes
+    : (roast.bulletRewrites || []).map(b => ({
+        weakOriginal: b.original,
+        strongRewrite: b.fixed,
+        reason: b.whyItWorks,
+      }));
 
   return (
-    <div className="w-full space-y-12">
-      {/* Quick Actions Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-xl">
-        <div className="flex items-center gap-2">
-          <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-mono text-zinc-300">
-            Roast Execution Complete. Scorecard ready below.
-          </span>
+    <div className="w-full flex flex-col gap-8">
+      {/* 03 / DAMAGE REPORT HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-4">
+        <div>
+          <div className="text-orange-500 text-xs font-normal font-['IBM_Plex_Mono'] uppercase tracking-widest mb-1">
+            03 / DAMAGE REPORT
+          </div>
+          <h2 className="text-neutral-50 text-2xl font-extrabold font-['Inter']">
+            Your Tech Career Reality Check
+          </h2>
+          <p className="text-zinc-400 text-xs font-['Inter'] mt-0.5">
+            The verdict is in. Here is how badly you are cooked and how to fix it.
+          </p>
         </div>
 
         {/* Persona quick switch */}
-        <div className="flex items-center gap-1.5 overflow-x-auto">
-          <span className="text-[11px] font-mono text-zinc-500 mr-1 hidden sm:inline">
-            Re-roast as:
-          </span>
+        <div className="flex items-center gap-1.5 font-['IBM_Plex_Mono'] text-xs">
+          <span className="text-zinc-500 hidden md:inline">Re-roast with:</span>
           {(Object.keys(PERSONAS) as PersonaId[]).map((pid) => {
             const p = PERSONAS[pid];
             const isCurrent = roast.personaId === pid;
@@ -140,326 +114,306 @@ export function Scorecard({ roast, onReRoastWithPersona, onReset }: ScorecardPro
                 key={pid}
                 onClick={() => onReRoastWithPersona(pid)}
                 disabled={isCurrent}
-                className={`px-2.5 py-1 rounded-md text-[11px] font-mono font-medium flex items-center gap-1 transition ${
+                className={`px-2 py-1 rounded text-[11px] transition cursor-pointer ${
                   isCurrent
                     ? 'bg-orange-500/20 text-orange-400 border border-orange-500/40 cursor-default'
-                    : 'bg-zinc-950 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-neutral-50 border border-zinc-800'
                 }`}
               >
-                <span>{p.avatarEmoji}</span>
-                <span className="hidden md:inline">{p.name.split(' ')[0]}</span>
+                {p.avatarEmoji} <span className="hidden lg:inline">{p.name.split(' ')[0]}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 4. THE SHAREABLE "COOKED SCORECARD" COMPONENT (CRUCIAL MAX-W-MD CONTAINER) */}
-      {/* ========================================================================= */}
-      <div className="flex flex-col items-center">
-        <motion.div
-          initial={{ scale: 0.96, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          ref={cardRef}
-          id="cooked-scorecard"
-          className="w-full max-w-md mx-auto border-2 border-zinc-700 rounded-2xl p-6 bg-gradient-to-b from-zinc-900 via-zinc-950 to-black shadow-2xl relative overflow-hidden"
-        >
-          {/* Subtle Ambient Background Gradients */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-orange-600/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Top Row: User's Name/GitHub + Persona Badge + Date */}
-          <div className="relative z-10 flex items-center justify-between border-b border-zinc-800/90 pb-3 mb-5">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-sm shadow-inner">
-                {currentPersona.avatarEmoji}
-              </div>
-              <div className="leading-tight">
-                <div className="text-xs font-mono font-bold text-zinc-200 truncate max-w-[150px]">
-                  {roast.targetName || 'Desi Candidate'}
-                </div>
-                <div className="text-[10px] font-mono text-zinc-500 truncate max-w-[150px]">
-                  @{currentPersona.name.split(' ')[0].toLowerCase()}-verdict
-                </div>
-              </div>
-            </div>
-
-            <div className="text-right">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-orange-500/10 text-orange-400 border border-orange-500/30">
-                {currentPersona.name.split(' ')[0]}
-              </span>
-              <div className="text-[9px] font-mono text-zinc-500 mt-0.5">
-                {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-              </div>
-            </div>
-          </div>
-
-          {/* Centerpiece: Massive Circular SVG Progress Ring + Bold Verdict Title */}
-          <div className="relative z-10 flex flex-col items-center justify-center text-center my-3">
-            <div className="relative flex items-center justify-center">
-              <svg className="w-40 h-40 transform -rotate-90">
-                {/* Background Ring */}
-                <circle
-                  cx="80"
-                  cy="80"
-                  r={radius}
-                  stroke="#27272a"
-                  strokeWidth="10"
-                  fill="transparent"
-                />
-                {/* Animated Progress Gradient Ring */}
-                <circle
-                  cx="80"
-                  cy="80"
-                  r={radius}
-                  stroke="url(#cookedGradient)"
-                  strokeWidth="10"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  strokeLinecap="round"
-                  fill="transparent"
-                  className="transition-all duration-1000 ease-out"
-                />
-                <defs>
-                  <linearGradient id="cookedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#F97316" />
-                    <stop offset="100%" stopColor="#EF4444" />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              {/* Center Cooked Content */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-4xl font-mono font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500 tracking-tighter">
-                  {roast.cookedPercentage}%
-                </span>
-                <span className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-orange-400 flex items-center gap-0.5">
-                  <Flame className="w-3 h-3 fill-orange-500 text-orange-500 inline" />
-                  COOKED
-                </span>
-              </div>
-            </div>
-
-            {/* Bold Verdict Title Badge */}
-            <div className="mt-3 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-700/80 shadow-md">
-              <span className="text-xs sm:text-sm font-extrabold tracking-tight text-zinc-100 line-clamp-1">
-                &ldquo;{roast.verdictTitle}&rdquo;
-              </span>
-            </div>
-          </div>
-
-          {/* Metric Box: 2-Column Monospace Grid */}
-          <div className="relative z-10 grid grid-cols-2 gap-2.5 my-4">
-            <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block mb-0.5">
-                PREDICTED CTC
-              </span>
-              <span className="text-xs sm:text-sm font-mono font-black text-orange-400 leading-tight block truncate">
-                {roast.predictedPackage}
-              </span>
-            </div>
-
-            <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500 block mb-0.5">
-                DELUSION LEVEL
-              </span>
-              <span className="text-xs sm:text-sm font-mono font-black text-red-400 leading-tight block truncate flex items-center gap-1">
-                <AlertOctagon className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                {delusionLevel}
-              </span>
-            </div>
-          </div>
-
-          {/* Roast Summary Quote Block */}
-          <div className="relative z-10 p-3 rounded-xl bg-zinc-950/90 border border-zinc-800/80 text-[11px] text-zinc-300 italic mb-4 leading-relaxed font-sans">
-            &ldquo;{roast.roastSummary}&rdquo;
-          </div>
-
-          {/* Red Flags List: 3 Compact Dark Pills with ❌ Icons */}
-          <div className="relative z-10 space-y-2 mb-5">
-            <div className="text-[10px] font-mono uppercase font-bold text-zinc-400 tracking-wider flex items-center gap-1">
-              <span>CRITICAL RED FLAGS</span>
-            </div>
-            {roast.redFlags.map((flag, idx) => (
-              <div
-                key={idx}
-                className="flex items-start gap-2 p-2 rounded-lg bg-zinc-950/70 border border-red-500/20 text-xs text-zinc-300"
-              >
-                <span className="text-red-500 text-xs shrink-0 select-none">❌</span>
-                <span className="text-[11px] leading-snug">{flag}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Footer Inside the Card: Watermark for Viral Screenshots */}
-          <div className="relative z-10 pt-3 border-t border-zinc-800 flex items-center justify-between text-[10px] font-mono text-zinc-500">
-            <span className="font-bold text-zinc-400">cookedresume.in</span>
-            <span>Roast Your Tech Resume</span>
-          </div>
-        </motion.div>
-
-        {/* Buttons Below the Card */}
-        <div className="w-full max-w-md mt-4 flex flex-col gap-2.5">
-          {/* Prominent Download Button */}
-          <button
-            onClick={handleDownloadImage}
-            disabled={isExporting}
-            className="w-full py-3.5 px-4 rounded-xl font-mono text-xs sm:text-sm font-black uppercase tracking-wider text-white bg-gradient-to-r from-orange-500 via-orange-600 to-red-600 hover:from-orange-600 hover:to-red-700 shadow-xl shadow-orange-500/25 transition-all flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+      {/* TWO COLUMN GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* LEFT COLUMN: THE VIRAL SCORECARD */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          <div
+            id="cooked-scorecard-element"
+            className="w-full bg-zinc-900 outline outline-1 outline-orange-500/80 rounded-lg p-6 shadow-[0px_0px_35px_0px_rgba(249,115,22,0.15)] flex flex-col gap-5 relative overflow-hidden"
           >
-            {isExporting ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Exporting Retina Scorecard...</span>
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                <span>📸 Download Scorecard PNG</span>
-              </>
-            )}
-          </button>
+            {/* Top row: Name + Persona Badge */}
+            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="size-7 rounded bg-orange-500/10 border border-orange-500/30 flex items-center justify-center text-xs">
+                  {currentPersona.avatarEmoji}
+                </div>
+                <div>
+                  <div className="text-xs font-['IBM_Plex_Mono'] font-bold text-neutral-100 truncate max-w-[150px]">
+                    {roast.targetName || 'Desi Candidate'}
+                  </div>
+                  <div className="text-[10px] font-['IBM_Plex_Mono'] text-zinc-500">
+                    SUBJECT PROFILE
+                  </div>
+                </div>
+              </div>
 
-          {/* Social Share Buttons (WhatsApp, Reddit, Twitter/X) */}
-          <div className="grid grid-cols-3 gap-2">
+              <div className="text-right">
+                <span className="text-[10px] font-['IBM_Plex_Mono'] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/30 px-2 py-0.5 rounded-xs uppercase">
+                  {currentPersona.name}
+                </span>
+                <div className="text-[9px] font-['IBM_Plex_Mono'] text-zinc-500 mt-0.5">
+                  {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </div>
+              </div>
+            </div>
+
+            {/* Circular Progress Ring Centerpiece */}
+            <div className="flex flex-col items-center justify-center text-center my-1">
+              <div className="relative flex items-center justify-center">
+                <svg className="size-36 transform -rotate-90">
+                  <circle
+                    cx="72"
+                    cy="72"
+                    r={radius}
+                    stroke="#27272a"
+                    strokeWidth="10"
+                    fill="transparent"
+                  />
+                  <circle
+                    cx="72"
+                    cy="72"
+                    r={radius}
+                    stroke="url(#scorecardFigmaGradient)"
+                    strokeWidth="10"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    fill="transparent"
+                    className="transition-all duration-1000 ease-out"
+                  />
+                  <defs>
+                    <linearGradient id="scorecardFigmaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#F97316" />
+                      <stop offset="100%" stopColor="#EF4444" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-extrabold font-['IBM_Plex_Mono'] text-neutral-50 tracking-tighter">
+                    {roast.cookedPercentage}%
+                  </span>
+                  <span className="text-[10px] font-bold font-['IBM_Plex_Mono'] uppercase tracking-widest text-orange-500 flex items-center gap-0.5">
+                    <Flame className="size-2.5 fill-orange-500 text-orange-500" />
+                    COOKED
+                  </span>
+                </div>
+              </div>
+
+              {/* Bold Verdict Badge */}
+              <div className="mt-3 px-3 py-1.5 rounded-md bg-zinc-950 border border-zinc-700/80 shadow-md">
+                <span className="text-xs font-extrabold font-['Inter'] tracking-tight text-neutral-50">
+                  &ldquo;{roast.verdictBadge || roast.verdictTitle}&rdquo;
+                </span>
+              </div>
+            </div>
+
+            {/* Metric Box: 2-Column Monospace Grid */}
+            <div className="grid grid-cols-2 gap-2.5 font-['IBM_Plex_Mono']">
+              <div className="p-3 rounded-md bg-zinc-950 border border-zinc-800">
+                <span className="text-[9px] uppercase tracking-wider text-zinc-500 block mb-0.5">
+                  PREDICTED CTC
+                </span>
+                <span className="text-xs font-bold text-orange-400 block truncate">
+                  {roast.predictedCTC || roast.predictedPackage}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-md bg-zinc-950 border border-zinc-800">
+                <span className="text-[9px] uppercase tracking-wider text-zinc-500 block mb-0.5">
+                  DELUSION LEVEL
+                </span>
+                <span className="text-xs font-bold text-red-400 block truncate">
+                  {roast.delusionLevel}
+                </span>
+              </div>
+            </div>
+
+            {/* Roast Paragraph */}
+            <p className="p-3.5 rounded-md bg-zinc-950/70 border border-zinc-800 text-xs italic font-normal font-['Inter'] text-zinc-300 leading-relaxed">
+              &ldquo;{roast.roastParagraph || roast.roastSummary}&rdquo;
+            </p>
+
+            {/* Red Flags List */}
+            <div className="space-y-2">
+              <div className="text-[10px] font-['IBM_Plex_Mono'] uppercase font-bold text-zinc-400 tracking-wider">
+                CRITICAL RED FLAGS (03)
+              </div>
+              {roast.redFlags.map((flag, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start gap-2 p-2 rounded bg-zinc-950 border border-red-500/20 text-xs font-['Inter'] text-zinc-300"
+                >
+                  <span className="text-red-500 text-xs shrink-0 select-none">❌</span>
+                  <span className="text-[11px] leading-snug">{flag}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Watermark Footer inside the card */}
+            <div className="pt-3 border-t border-zinc-800 flex items-center justify-between text-[10px] font-['IBM_Plex_Mono'] text-zinc-500">
+              <span className="font-bold text-zinc-400">cookedresume.in</span>
+              <span>Roast Your Tech Resume</span>
+            </div>
+          </div>
+
+          {/* BELOW CARD ACTIONS */}
+          <div className="flex flex-col gap-2.5">
+            {/* Download Button using Native Canvas */}
             <button
-              onClick={handleShareWhatsApp}
-              className="py-2.5 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/40 text-xs font-mono font-semibold text-zinc-200 transition flex items-center justify-center gap-1.5"
+              onClick={handleDownloadCanvasPng}
+              disabled={isExporting}
+              className="w-full py-3.5 px-4 rounded-md font-['IBM_Plex_Mono'] text-xs font-bold uppercase tracking-wider text-zinc-950 bg-orange-500 hover:bg-orange-600 transition flex items-center justify-center gap-2 shadow-[0px_0px_20px_0px_rgba(249,115,22,0.3)] cursor-pointer disabled:opacity-50"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-              <span>WhatsApp</span>
+              {isExporting ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  <span>Rendering 1080x1350 Canvas...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="size-4 text-zinc-950" />
+                  <span>📸 Download Scorecard PNG</span>
+                </>
+              )}
             </button>
 
-            <button
-              onClick={handleShareReddit}
-              className="py-2.5 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-orange-500/40 text-xs font-mono font-semibold text-zinc-200 transition flex items-center justify-center gap-1.5"
-            >
-              <Share2 className="w-3.5 h-3.5 text-orange-400" />
-              <span>Reddit</span>
-            </button>
+            {/* Social Share Grid */}
+            <div className="grid grid-cols-3 gap-2 font-['IBM_Plex_Mono'] text-xs">
+              <button
+                onClick={handleShareWhatsApp}
+                className="py-2.5 px-2 rounded-md bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-emerald-500/50 text-zinc-300 transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <MessageCircle className="size-3.5 text-emerald-400" />
+                <span>WhatsApp</span>
+              </button>
 
-            <button
-              onClick={handleShareTwitter}
-              className="py-2.5 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-mono font-semibold text-zinc-200 transition flex items-center justify-center gap-1.5"
-            >
-              <TwitterXIcon className="w-3.5 h-3.5 text-zinc-100" />
-              <span>Post to X</span>
-            </button>
+              <button
+                onClick={handleShareReddit}
+                className="py-2.5 px-2 rounded-md bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-orange-500/50 text-zinc-300 transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Share2 className="size-3.5 text-orange-400" />
+                <span>Reddit</span>
+              </button>
+
+              <button
+                onClick={handleShareTwitter}
+                className="py-2.5 px-2 rounded-md bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-300 transition flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <TwitterXIcon className="size-3 text-neutral-100" />
+                <span>Post to X</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ========================================================================= */}
-      {/* 5. GITHUB-PR STYLE RESUME FIXER UI (BELOW THE CARD) */}
-      {/* ========================================================================= */}
-      <section className="pt-6 border-t border-zinc-800">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {/* Section Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        {/* RIGHT COLUMN: GITHUB-PR STYLE RESUME FIXER */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-3">
             <div>
-              <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                <span>🛠️ Okay, Stop Crying. Here is How to Un-Cook Your Resume:</span>
+              <h3 className="text-xl font-extrabold font-['Inter'] text-neutral-50 leading-tight">
+                🛠️ Okay, Stop Crying. Here is How to Un-Cook Your Resume:
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-400 mt-1 font-mono">
-                Pull Request: <span className="text-emerald-400 font-bold">Fix/ATS-Optimization</span> into <code className="text-zinc-300">main</code>
+              <p className="text-xs font-['IBM_Plex_Mono'] text-zinc-400 mt-1">
+                Pull Request: <span className="text-emerald-400 font-bold">Fix/ATS-Optimization</span> into <code className="text-neutral-300">main</code>
               </p>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs font-mono px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 self-start sm:self-auto">
-              <GitPullRequest className="w-3.5 h-3.5 text-emerald-400" />
-              <span>3 changes requested</span>
+            <div className="flex items-center gap-1.5 text-xs font-['IBM_Plex_Mono'] px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 self-start sm:self-auto">
+              <GitPullRequest className="size-3.5 text-emerald-400" />
+              <span>3 fixes suggested</span>
             </div>
           </div>
 
           {/* 3 Git Diff Cards */}
-          <div className="space-y-5">
-            {roast.bulletRewrites.map((rewrite, idx) => (
-              <motion.div
+          <div className="space-y-4">
+            {bulletItems.map((item, idx) => (
+              <div
                 key={idx}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1, duration: 0.3 }}
-                className="rounded-xl border border-zinc-800 bg-[#09090b] overflow-hidden shadow-xl"
+                className="rounded-lg border border-zinc-800 bg-zinc-900 overflow-hidden shadow-lg"
               >
-                {/* Git Commit / File Header */}
-                <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900/90 border-b border-zinc-800 text-xs font-mono text-zinc-400">
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-2 bg-zinc-950 border-b border-zinc-800 font-['IBM_Plex_Mono'] text-xs text-zinc-400">
                   <div className="flex items-center gap-2">
-                    <FileCode2 className="w-3.5 h-3.5 text-orange-400" />
-                    <span className="text-zinc-200 font-semibold">
-                      resume_experience_v{idx + 1}.tex
+                    <FileCode2 className="size-3.5 text-orange-500" />
+                    <span className="text-neutral-200 font-medium">
+                      experience_bullet_{idx + 1}.tex
                     </span>
-                    <span className="text-[10px] text-zinc-500 hidden sm:inline">
+                    <span className="text-[10px] text-zinc-600 hidden sm:inline">
                       @@ -1,1 +1,1 @@
                     </span>
                   </div>
 
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  <span className="text-[10px] px-2 py-0.5 rounded-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                     STAR METRIC ENHANCED
                   </span>
                 </div>
 
-                {/* Top Half: Red Tint (Original Weak Line) */}
-                <div className="p-3.5 sm:p-4 bg-red-950/20 border-l-4 border-red-500 font-mono text-xs sm:text-sm text-red-200 flex items-start gap-2.5">
+                {/* Top Half: Red Tint (weakOriginal) */}
+                <div className="p-3.5 bg-red-950/30 border-l-2 border-red-500 font-['IBM_Plex_Mono'] text-xs text-red-200 flex items-start gap-2.5">
                   <span className="text-red-500 font-bold select-none">-</span>
-                  <div className="flex-1 line-through opacity-85 leading-relaxed">
-                    {rewrite.original}
+                  <div className="line-through opacity-85 leading-relaxed">
+                    {item.weakOriginal}
                   </div>
                 </div>
 
-                {/* Bottom Half: Green Tint (Quantified Rewrite) + Copy Button */}
-                <div className="p-3.5 sm:p-4 bg-emerald-950/20 border-l-4 border-emerald-500 font-mono text-xs sm:text-sm text-emerald-200 flex items-start justify-between gap-3 border-t border-zinc-800/60">
+                {/* Bottom Half: Green Tint (strongRewrite) */}
+                <div className="p-3.5 bg-emerald-950/30 border-l-2 border-emerald-500 font-['IBM_Plex_Mono'] text-xs text-emerald-200 flex items-start justify-between gap-3 border-t border-zinc-800/80">
                   <div className="flex items-start gap-2.5 flex-1">
                     <span className="text-emerald-400 font-bold select-none">+</span>
                     <div className="font-semibold leading-relaxed text-emerald-100">
-                      {rewrite.fixed}
+                      {item.strongRewrite}
                     </div>
                   </div>
 
-                  {/* One-click Copy Button */}
+                  {/* Copy Button */}
                   <button
-                    onClick={() => handleCopyBullet(rewrite.fixed, idx)}
-                    className="p-1.5 sm:px-2.5 sm:py-1 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-1 shrink-0 transition"
-                    title="Copy fixed bullet to clipboard"
+                    onClick={() => handleCopyRewrite(item.strongRewrite, idx)}
+                    className="p-1 sm:px-2 sm:py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-['IBM_Plex_Mono'] flex items-center gap-1 shrink-0 transition cursor-pointer"
+                    title="Copy rewrite"
                   >
-                    {copiedBulletIdx === idx ? (
+                    {copiedIndex === idx ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="hidden sm:inline">Copied!</span>
+                        <Check className="size-3 text-emerald-400" />
+                        <span className="hidden sm:inline">Copied</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
+                        <Copy className="size-3" />
                         <span className="hidden sm:inline">Copy</span>
                       </>
                     )}
                   </button>
                 </div>
 
-                {/* Engineering Explanation Footer */}
-                <div className="px-4 py-2.5 bg-zinc-950 border-t border-zinc-800/80 text-[11px] font-mono text-zinc-400 flex items-start gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                {/* Reason Explanation */}
+                <div className="p-3 bg-zinc-950 border-t border-zinc-800 text-[11px] font-['IBM_Plex_Mono'] text-zinc-400 flex items-start gap-2">
+                  <Sparkles className="size-3.5 text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-zinc-300">Why this works: </strong>
-                    {rewrite.whyItWorks}
+                    <strong className="text-neutral-200">Why this gets you hired: </strong>
+                    {item.reason}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
 
-          {/* Reset / Roast Another CTA */}
-          <div className="pt-4 text-center">
+          {/* Reset / Upload Another */}
+          <div className="pt-2">
             <button
               onClick={onReset}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 hover:border-zinc-700 text-xs font-mono font-semibold transition"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-neutral-50 border border-zinc-800 hover:border-zinc-700 text-xs font-['IBM_Plex_Mono'] font-medium transition cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-orange-400" />
-              <span>Upload Another Resume or GitHub</span>
+              <RefreshCw className="size-3.5 text-orange-500" />
+              <span>Roast Another Resume / GitHub</span>
             </button>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

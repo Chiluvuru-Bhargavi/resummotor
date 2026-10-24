@@ -46,7 +46,7 @@ Analyze and roast the following ${sourceType === 'github' ? 'GitHub profile data
 
 PERSONA CONTEXT:
 Name/Role: ${personaMeta.name} (${personaMeta.role})
-Persona Slogan: ${personaMeta.tagline}
+Persona Catchphrase: "${personaMeta.sampleQuote}"
 Persona Prompt:
 ${personaSystemPrompt}
 
@@ -54,20 +54,21 @@ CONTENT TO ROAST:
 ${text.slice(0, 8000)}
 
 INSTRUCTIONS:
-1. Provide a "cookedPercentage" from 0 to 100 representing how cooked/doomed this profile is (higher = more cooked, typically 65 to 98 for typical Indian engineering graduates).
-2. "verdictTitle": A funny, brutal 3-6 word Indian tech verdict title (e.g. "Certified Tutorial Hell Resident", "Mass Recruiter Day-1 Bait", "Indiranagar Coffee Rejection", "Notice Period Fugitive").
-3. "predictedPackage": A hilarious, culturally accurate Indian tech salary prediction (e.g. "₹3.36 LPA with 2-year bond & 90-day notice period", "₹4.5 LPA + 0.0001% phantom ESOPs", "Debarred from campus placement").
-4. "roastSummary": Exactly 1 punchy, funny, brutally honest paragraph in Indian tech slang / Hinglish-flavored English matching your persona.
-5. "redFlags": Exactly 3 short, brutal one-liners about their specific projects/skills/habits mentioned in the text.
-6. "greenFlags": Exactly 1 or 2 genuine, decent things about their profile.
-7. "bulletRewrites": Exactly 3 objects containing { original: string, fixed: string, whyItWorks: string }. Take the weakest lines from their content and genuinely transform them into punchy, high-impact resume bullets using action verbs and quantified metrics (STAR format).
+1. "cookedPercentage": Integer from 0 to 100 representing how cooked/doomed this profile is.
+2. "verdictBadge": A punchy, capitalised 3-5 word Indian tech verdict (e.g. "CERTIFIED TUTORIAL HELL", "MASS RECRUITER BAIT", "ACTUALLY CRACKED", "NOTICE PERIOD FUGITIVE").
+3. "predictedCTC": A hilarious Indian tech salary prediction (e.g. "₹3.36 LPA (2-Yr Bond)", "₹4.5 LPA + Beanbag", "₹18 LPA + 0.001% ESOPs", "Debarred by TPO").
+4. "delusionLevel": One of "EXTREME", "HIGH", "MODERATE", "LOW".
+5. "roastParagraph": Exactly 1 brutal, funny Hinglish/Indian tech roast paragraph in your persona's distinctive voice.
+6. "redFlags": Exactly 3 short, brutal one-liners.
+7. "greenFlags": Exactly 2 things that are actually decent.
+8. "bulletFixes": Exactly 3 objects containing { "weakOriginal": string, "strongRewrite": string, "reason": string } fixing weak lines with quantified action metrics (STAR format).
 `;
 
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
-          systemInstruction: `You are the world's funniest and most culturally accurate Indian tech resume roaster. You know Indian engineering college culture, mass recruiter culture (TCS, Infosys, Wipro, Cognizant), Bangalore startup culture (Koramangala, Indiranagar, seed funding, p99 latency), FAANG bhaiya/didi culture (DSA 450 sheets, LeetCode, STAR method), and strict college Placement Cell HODs (TPO, backlogs, Times New Roman 12pt, debarment). Output MUST strictly conform to the JSON schema.`,
+          systemInstruction: `You are the world's funniest and most culturally accurate Indian tech resume roaster. You know Indian engineering college culture, mass recruiter culture (TCS, Infosys, Wipro, Cognizant), Bangalore startup culture (Koramangala, Indiranagar, seed funding, p99 latency), FAANG tech lead culture (DSA 450 sheets, LeetCode, STAR method), and strict college Placement Cell HODs (TPO, backlogs, Times New Roman 12pt, debarment). Output MUST strictly conform to the JSON schema.`,
           responseMimeType: 'application/json',
           responseSchema: {
             type: Type.OBJECT,
@@ -76,15 +77,19 @@ INSTRUCTIONS:
                 type: Type.INTEGER,
                 description: 'Score from 0 to 100 where 100 is completely cooked / doomed',
               },
-              verdictTitle: {
+              verdictBadge: {
                 type: Type.STRING,
-                description: 'Brutal, humorous 3-6 word verdict title',
+                description: 'Punchy uppercase verdict badge (e.g. CERTIFIED TUTORIAL HELL)',
               },
-              predictedPackage: {
+              predictedCTC: {
                 type: Type.STRING,
-                description: 'Humorous Indian tech package prediction (e.g. ₹3.36 LPA with bond)',
+                description: 'Humorous Indian tech CTC prediction (e.g. ₹3.36 LPA (2-Yr Bond))',
               },
-              roastSummary: {
+              delusionLevel: {
+                type: Type.STRING,
+                description: 'Delusion level: EXTREME, HIGH, MODERATE, or LOW',
+              },
+              roastParagraph: {
                 type: Type.STRING,
                 description: '1 punchy paragraph in Indian tech slang/Hinglish matching persona',
               },
@@ -96,30 +101,31 @@ INSTRUCTIONS:
               greenFlags: {
                 type: Type.ARRAY,
                 items: { type: Type.STRING },
-                description: '1-2 decent things found',
+                description: 'Exactly 2 decent things found',
               },
-              bulletRewrites: {
+              bulletFixes: {
                 type: Type.ARRAY,
                 items: {
                   type: Type.OBJECT,
                   properties: {
-                    original: { type: Type.STRING },
-                    fixed: { type: Type.STRING },
-                    whyItWorks: { type: Type.STRING },
+                    weakOriginal: { type: Type.STRING },
+                    strongRewrite: { type: Type.STRING },
+                    reason: { type: Type.STRING },
                   },
-                  required: ['original', 'fixed', 'whyItWorks'],
+                  required: ['weakOriginal', 'strongRewrite', 'reason'],
                 },
                 description: '3 objects fixing weak resume lines with STAR format and metrics',
               },
             },
             required: [
               'cookedPercentage',
-              'verdictTitle',
-              'predictedPackage',
-              'roastSummary',
+              'verdictBadge',
+              'predictedCTC',
+              'delusionLevel',
+              'roastParagraph',
               'redFlags',
               'greenFlags',
-              'bulletRewrites',
+              'bulletFixes',
             ],
           },
         },
@@ -130,17 +136,28 @@ INSTRUCTIONS:
         throw new Error('Empty response received from Gemini API');
       }
 
-      const parsed: RoastResult = JSON.parse(responseText);
-      return NextResponse.json({
+      const parsed: any = JSON.parse(responseText);
+
+      // Add compatibility fields
+      const result: RoastResult = {
         ...parsed,
+        verdictTitle: parsed.verdictBadge,
+        predictedPackage: parsed.predictedCTC,
+        roastSummary: parsed.roastParagraph,
+        bulletRewrites: parsed.bulletFixes?.map((b: any) => ({
+          original: b.weakOriginal,
+          fixed: b.strongRewrite,
+          whyItWorks: b.reason,
+        })) || [],
         personaId,
         targetName: targetName || 'Candidate',
         sourceType,
         isAIGenerated: true,
-      });
+      };
+
+      return NextResponse.json(result);
     } catch (apiError: any) {
       console.warn('Gemini API call failed, falling back to heuristic roaster:', apiError?.message || apiError);
-      // Fallback seamlessly so user experience never breaks
       const fallbackRoast = generateHeuristicRoast(text, personaId, targetName, sourceType);
       return NextResponse.json({
         ...fallbackRoast,

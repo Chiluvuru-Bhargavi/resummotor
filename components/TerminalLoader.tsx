@@ -1,20 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, ShieldAlert, Cpu } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Terminal } from 'lucide-react';
 
 const LOADING_COMMANDS = [
-  'Scanning for copy-pasted Netflix & MERN Todo clones...',
-  "Checking if 'Proficient in C/C++' is an absolute lie...",
-  'Calculating TCS Ninja vs Bengaluru Startup probability...',
-  'Consulting Sharma Ji Ka Beta for comparison metrics...',
-  'Detecting Turbo C++ and MS Office in technical skills...',
-  'Searching for active backlogs in Engineering Mathematics II...',
-  'Evaluating 2-day GenAI workshop participation certificate...',
-  'Analyzing Hinjewadi Phase-3 cafeteria commute resistance...',
-  'Measuring LeetCode Hard evasion coefficient...',
-  'Formulating high-temperature Desi tech roast...',
+  'Scanning for copy-pasted YouTube tutorial clones...',
+  'Calculating WITCH company bond probability...',
+  "Searching for 'Proficient in MS Office & C++' contradictions...",
+  'Checking if 4th semester backlogs were cleared...',
+  'Running sentiment analysis on 2-day GenAI workshop certificate...',
+  'Calculating Koramangala beanbag rejection quotient...',
+  'Consulting Sharma Ji Ka Beta for CTC benchmark...',
+  'Compiling high-temperature Indian tech roast...',
 ];
 
 export function TerminalLoader() {
@@ -32,7 +30,7 @@ export function TerminalLoader() {
         });
         return next;
       });
-    }, 800);
+    }, 700);
 
     return () => clearInterval(timer);
   }, []);
@@ -42,61 +40,53 @@ export function TerminalLoader() {
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
-      transition={{ duration: 0.3 }}
-      className="w-full max-w-xl mx-auto my-6 rounded-2xl bg-[#09090b] border-2 border-zinc-700/80 shadow-2xl shadow-orange-500/10 overflow-hidden font-mono"
+      transition={{ duration: 0.25 }}
+      className="w-full max-w-[900px] mx-auto my-8 bg-zinc-900 outline outline-1 outline-orange-500/40 rounded-lg p-6 shadow-2xl font-['IBM_Plex_Mono']"
     >
       {/* Terminal Title Bar */}
-      <div className="flex items-center justify-between px-4 py-3 bg-zinc-900/90 border-b border-zinc-800">
+      <div className="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500/80 border border-red-600/60" />
-          <div className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-600/60" />
-          <div className="w-3 h-3 rounded-full bg-emerald-500/80 border border-emerald-600/60" />
-          <span className="ml-2 text-xs font-semibold text-zinc-400 flex items-center gap-1.5">
-            <Terminal className="w-3.5 h-3.5 text-orange-400" />
-            cooked-cli — bash (80x24)
+          <div className="size-2.5 rounded-full bg-red-500/80" />
+          <div className="size-2.5 rounded-full bg-amber-500/80" />
+          <div className="size-2.5 rounded-full bg-emerald-500/80" />
+          <span className="ml-2 text-xs text-zinc-400 flex items-center gap-1.5">
+            <Terminal className="size-3.5 text-orange-500" />
+            cooked-cli v2.5 / EXECUTION RUNTIME
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-[10px] text-zinc-500 uppercase tracking-widest font-bold">
-          <span className="flex h-2 w-2 relative">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-          </span>
-          ANALYZING
+        <div className="flex items-center gap-1.5 text-xs text-orange-500">
+          <div className="size-1.5 bg-orange-500 rounded-full animate-ping" />
+          <span>ROAST IN PROGRESS</span>
         </div>
       </div>
 
-      {/* Terminal Body */}
-      <div className="p-5 text-xs sm:text-sm space-y-2.5 min-h-[180px] bg-black/80 flex flex-col justify-end">
-        <div className="text-zinc-600 text-xs mb-1">
-          $ cooked-cli --model=gemini-2.5-flash --strict-schema --target=resume.pdf
-        </div>
-
-        {/* Previous completed logs */}
+      {/* Terminal Output */}
+      <div className="space-y-2 text-xs min-h-[140px] flex flex-col justify-end">
         {logs.slice(0, -1).map((log, index) => (
           <div key={index} className="text-zinc-500 flex items-start gap-2">
-            <span className="text-emerald-500/70 select-none">✓</span>
-            <span className="line-clamp-1">{log}</span>
+            <span className="text-emerald-500 select-none">✓</span>
+            <span>{log}</span>
           </div>
         ))}
 
-        {/* Active blinking command */}
-        <div className="text-orange-400 flex items-start gap-2 font-bold">
+        {/* Current log */}
+        <div className="text-orange-400 flex items-start gap-2 font-semibold">
           <span className="text-orange-500 select-none">&gt;</span>
-          <span className="leading-snug">
+          <span>
             {LOADING_COMMANDS[currentIndex]}
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
-              transition={{ repeat: Infinity, duration: 0.8 }}
-              className="inline-block w-2 h-4 bg-orange-400 ml-1 translate-y-0.5"
+              transition={{ repeat: Infinity, duration: 0.7 }}
+              className="inline-block w-1.5 h-3.5 bg-orange-500 ml-1 translate-y-0.5"
             />
           </span>
         </div>
+      </div>
 
-        <div className="pt-3 mt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
-          <span>Target: Indian Tech Ecosystem</span>
-          <span className="font-mono text-orange-400/80">Buffer: 4096 tokens</span>
-        </div>
+      <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
+        <span>Strict Schema: @google/genai (gemini-2.5-flash)</span>
+        <span className="text-orange-500/80">Polling Rate: 700ms</span>
       </div>
     </motion.div>
   );
