@@ -12,7 +12,9 @@ export const PERSONAS: Record<PersonaId, PersonaInfo> = {
     borderColor: 'border-amber-500/40 hover:border-amber-400',
     bgGlow: 'from-amber-500/10 via-amber-950/20 to-transparent',
     description: 'Specializes in 90-day notice periods, 60% aggregate cutoffs, Hinjewadi phase-3 cubicles, and aptitude tests.',
-    sampleQuote: '"Please do the needful and confirm if you are willing to relocate to Chennai SEZ campus."'
+    sampleQuote: '"Please do the needful and confirm if you are willing to relocate to Chennai SEZ campus."',
+    spiceLevel: 'Spice: 92%',
+    characterClass: 'CLASS: CORPORATE OVERLORD'
   },
   'startup-cto': {
     id: 'startup-cto',
@@ -25,7 +27,9 @@ export const PERSONAS: Record<PersonaId, PersonaInfo> = {
     borderColor: 'border-cyan-500/40 hover:border-cyan-400',
     bgGlow: 'from-cyan-500/10 via-cyan-950/20 to-transparent',
     description: 'Demands distributed systems, Kafka queues, Rust rewrites, Indiranagar third-wave coffee, and 48hr zero-sleep hackathons.',
-    sampleQuote: '"Talk to me when your Redis cache hit ratio crosses 98%, not about your React calculator."'
+    sampleQuote: '"Talk to me when your Redis cache hit ratio crosses 98%, not about your React calculator."',
+    spiceLevel: 'Spice: 99%',
+    characterClass: 'CLASS: INDIRANAGAR FOUNDER'
   },
   'faang-bhaiya': {
     id: 'faang-bhaiya',
@@ -38,7 +42,9 @@ export const PERSONAS: Record<PersonaId, PersonaInfo> = {
     borderColor: 'border-rose-500/40 hover:border-rose-400',
     bgGlow: 'from-rose-500/10 via-rose-950/20 to-transparent',
     description: 'Obsessed with Dynamic Programming on Trees, LeetCode 450 DSA sheet, quantitative STAR impact, and Telegram premium groups.',
-    sampleQuote: '"You solved 12 LeetCode Easies and put "Expert in DSA"? Bhaiya is disappointed."'
+    sampleQuote: '"You solved 12 LeetCode Easies and put "Expert in DSA"? Bhaiya is disappointed."',
+    spiceLevel: 'Spice: 88%',
+    characterClass: 'CLASS: SDE INFLUENCER'
   },
   'placement-hod': {
     id: 'placement-hod',
@@ -51,7 +57,9 @@ export const PERSONAS: Record<PersonaId, PersonaInfo> = {
     borderColor: 'border-purple-500/40 hover:border-purple-400',
     bgGlow: 'from-purple-500/10 via-purple-950/20 to-transparent',
     description: 'Enforces Times New Roman 12pt format, checks for active backlogs in Engg Maths, and threatens disciplinary debarment at 8:01 AM.',
-    sampleQuote: '"You have one active backlog in Digital Signal Processing and you dare to dream of Day 1 companies?"'
+    sampleQuote: '"You have one active backlog in Digital Signal Processing and you dare to dream of Day 1 companies?"',
+    spiceLevel: 'Spice: 97%',
+    characterClass: 'CLASS: DISCIPLINE ENFORCER'
   }
 };
 

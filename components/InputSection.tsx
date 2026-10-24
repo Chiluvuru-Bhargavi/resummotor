@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
 import {
   UploadCloud,
   FileText,
@@ -11,10 +12,10 @@ import {
   Flame,
   ChevronDown,
   ChevronUp,
-  UserCheck,
   Star,
   GitFork,
-  BookOpen
+  BookOpen,
+  Terminal,
 } from 'lucide-react';
 import { GithubIcon } from '@/components/BrandIcons';
 import { extractTextFromPdf } from '@/lib/pdf-parser';
@@ -22,7 +23,6 @@ import { fetchGitHubSummary, FormattedGitHubResult } from '@/lib/github';
 import {
   SAMPLE_TIER3_RESUME_TEXT,
   SAMPLE_GITHUB_USERNAME,
-  SAMPLE_GITHUB_SUMMARY_TEXT,
 } from '@/lib/sample-data';
 
 export type InputMode = 'pdf' | 'github' | 'sample';
@@ -36,16 +36,6 @@ interface InputSectionProps {
   isLoading: boolean;
   onOpenSampleModal: () => void;
 }
-
-const ROAST_LOADING_STEPS = [
-  '📄 Scanning for "Career Objective: To work in a challenging environment..."',
-  '☕ Calculating Hinjewadi cafeteria commute time...',
-  '💻 Searching for React Calculator and Weather App...',
-  '📊 Checking 10th and 12th marksheet for 60% criteria...',
-  '🔥 Checking if you solved Striver 450 DSA sheet...',
-  '📑 Verifying Times New Roman 12pt margin compliance...',
-  '⚡ Formulating brutal Hinglish roast...',
-];
 
 export function InputSection({
   onRoastTrigger,
@@ -71,17 +61,6 @@ export function InputSection({
 
   // Preview toggle
   const [showExtractedPreview, setShowExtractedPreview] = useState(false);
-
-  // Loading step index for fun animation
-  const [loadingStepIndex, setLoadingStepIndex] = useState(0);
-
-  React.useEffect(() => {
-    if (!isLoading) return;
-    const interval = setInterval(() => {
-      setLoadingStepIndex((prev) => (prev + 1) % ROAST_LOADING_STEPS.length);
-    }, 1800);
-    return () => clearInterval(interval);
-  }, [isLoading]);
 
   // Handle PDF file selection
   const handlePdfFile = async (file: File) => {
@@ -177,60 +156,60 @@ export function InputSection({
     activeTab === 'sample';
 
   return (
-    <div className="w-full bg-zinc-900/60 backdrop-blur-md border border-zinc-800/90 rounded-3xl p-5 sm:p-7 shadow-2xl shadow-black/50">
-      {/* Step Header & Tab Navigation */}
+    <div className="w-full bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-2xl p-5 sm:p-7 shadow-2xl relative">
+      {/* Top Header / Tab Switcher */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-zinc-800/80 pb-5">
         <div>
-          <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
-            <span className="flex items-center justify-center w-5 h-5 rounded-full bg-orange-500/20 text-orange-400 text-xs font-mono">
-              1
+          <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-300 font-bold flex items-center gap-2">
+            <span className="flex items-center justify-center w-5 h-5 rounded-md bg-orange-500/20 text-orange-400 text-xs font-mono font-bold border border-orange-500/30">
+              01
             </span>
-            Step 1: Provide Your Profile
+            Step 1: Ingest Profile Data
           </h2>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Client-side parsing guarantees zero server storage of your private documents.
+          <p className="text-xs text-zinc-400 mt-1 font-mono">
+            Client-side text parsing only. Zero server-side file persistence.
           </p>
         </div>
 
-        {/* Tab switcher */}
-        <div className="flex items-center p-1 bg-zinc-950/80 border border-zinc-800 rounded-2xl self-start sm:self-auto">
+        {/* Developer Tab switcher */}
+        <div className="flex items-center p-1 bg-black/60 border border-zinc-800 rounded-xl self-start sm:self-auto font-mono">
           <button
             type="button"
             onClick={() => setActiveTab('pdf')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'pdf'
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-zinc-800 text-orange-400 border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             <UploadCloud className="w-3.5 h-3.5" />
-            Upload PDF
+            resume.pdf
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('github')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'github'
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-zinc-800 text-orange-400 border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
             <GithubIcon className="w-3.5 h-3.5" />
-            GitHub Profile
+            github.com
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('sample')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
               activeTab === 'sample'
-                ? 'bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/20'
-                : 'text-zinc-400 hover:text-white'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
+                : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            Sample Tier-3
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            tier3_demo
           </button>
         </div>
       </div>
@@ -257,54 +236,54 @@ export function InputSection({
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`group relative flex flex-col items-center justify-center p-8 sm:p-10 border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
+            className={`group relative flex flex-col items-center justify-center p-8 sm:p-10 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
               isDragOver
                 ? 'border-orange-500 bg-orange-500/10'
                 : pdfText
-                ? 'border-emerald-500/50 bg-emerald-950/10'
-                : 'border-zinc-800 hover:border-zinc-700 bg-zinc-950/40 hover:bg-zinc-950/70'
+                ? 'border-emerald-500/60 bg-emerald-950/20'
+                : 'border-zinc-800 hover:border-orange-500/50 bg-black/40 hover:bg-black/60'
             }`}
           >
             {isExtractingPdf ? (
-              <div className="flex flex-col items-center gap-3 text-center py-4">
-                <Loader2 className="w-9 h-9 text-orange-400 animate-spin" />
+              <div className="flex flex-col items-center gap-3 text-center py-4 font-mono">
+                <Loader2 className="w-8 h-8 text-orange-400 animate-spin" />
                 <div>
-                  <p className="text-sm font-semibold text-zinc-200">
-                    Extracting text on client side with <code className="text-orange-400 font-mono">pdfjs-dist</code>...
+                  <p className="text-xs sm:text-sm font-bold text-zinc-200">
+                    Executing <span className="text-orange-400">pdfjs-dist</span> in browser sandbox...
                   </p>
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Your PDF never leaves your device. Only raw text is sent to our roast API.
+                  <p className="text-[11px] text-zinc-500 mt-1">
+                    Zero server transmission of binary files.
                   </p>
                 </div>
               </div>
             ) : pdfText ? (
-              <div className="flex flex-col items-center gap-3 text-center py-2">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+              <div className="flex flex-col items-center gap-3 text-center py-2 font-mono">
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white flex items-center justify-center gap-2">
+                  <p className="text-sm font-bold text-zinc-100 flex items-center justify-center gap-2">
                     {pdfFile?.name}
-                    <span className="text-xs font-normal text-emerald-400 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                      Extracted ({pdfPageCount} {pdfPageCount === 1 ? 'page' : 'pages'})
+                    <span className="text-[11px] text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                      EXTRACTED ({pdfPageCount}p • {pdfText.split(/\s+/).length}w)
                     </span>
                   </p>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    Extracted {pdfText.split(/\s+/).length} words ready for roasting. Click to replace PDF.
+                  <p className="text-xs text-zinc-400 mt-1 font-sans">
+                    Text stripped and verified. Ready for roasting. Click to replace PDF.
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-3 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:text-orange-400 group-hover:border-orange-500/40 group-hover:scale-105 transition flex items-center justify-center shadow-lg">
-                  <UploadCloud className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-400 group-hover:text-orange-400 group-hover:border-orange-500/50 group-hover:scale-105 transition flex items-center justify-center shadow-lg">
+                  <UploadCloud className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-zinc-200">
-                    Drop your resume PDF here or <span className="text-orange-400 underline">browse</span>
+                  <p className="text-sm font-extrabold text-zinc-200 tracking-tight">
+                    Drop your resume PDF here or <span className="text-orange-400 underline font-mono">browse</span>
                   </p>
-                  <p className="text-xs text-zinc-500 mt-1">
-                    Client-side extraction via <span className="text-zinc-400 font-mono">pdfjs-dist</span> (standard ATS PDF resumes work best)
+                  <p className="text-xs text-zinc-500 mt-1 font-mono">
+                    Client-side extraction via pdfjs-dist • 100% private
                   </p>
                 </div>
               </div>
@@ -312,7 +291,7 @@ export function InputSection({
           </div>
 
           {pdfError && (
-            <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300">
+            <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 font-mono">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{pdfError}</span>
             </div>
@@ -320,17 +299,17 @@ export function InputSection({
 
           {/* Extracted text snippet preview toggle */}
           {pdfText && (
-            <div className="pt-2">
+            <div className="pt-2 font-mono">
               <button
                 type="button"
                 onClick={() => setShowExtractedPreview(!showExtractedPreview)}
                 className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition"
               >
                 {showExtractedPreview ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                {showExtractedPreview ? 'Hide Extracted Text' : 'View Extracted Text Preview'}
+                {showExtractedPreview ? 'Hide Raw Text Stream' : 'Inspect Extracted Text Stream'}
               </button>
               {showExtractedPreview && (
-                <div className="mt-2 p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-xs text-zinc-300 font-mono max-h-48 overflow-y-auto whitespace-pre-wrap leading-relaxed">
+                <div className="mt-2 p-3 bg-black border border-zinc-800 rounded-xl text-xs text-zinc-400 font-mono max-h-40 overflow-y-auto whitespace-pre-wrap leading-relaxed">
                   {pdfText}
                 </div>
               )}
@@ -354,20 +333,20 @@ export function InputSection({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleFetchGithub();
                 }}
-                placeholder="username (e.g. torvalds, shadcn)"
-                className="w-full pl-28 pr-4 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 font-mono text-sm transition"
+                placeholder="username (e.g. torvalds)"
+                className="w-full pl-28 pr-4 py-2.5 bg-black border border-zinc-800 rounded-xl text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 font-mono text-sm transition"
               />
             </div>
             <button
               type="button"
               onClick={() => handleFetchGithub()}
               disabled={isFetchingGithub || !githubUsername.trim()}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-zinc-800 hover:bg-zinc-700 text-white disabled:opacity-50 transition border border-zinc-700/60"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-bold bg-zinc-800 hover:bg-zinc-700 text-white disabled:opacity-50 transition border border-zinc-700"
             >
               {isFetchingGithub ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Fetching...
+                  Querying API...
                 </>
               ) : (
                 'Fetch Repos'
@@ -376,7 +355,7 @@ export function InputSection({
           </div>
 
           {/* Quick preset profile button */}
-          <div className="flex items-center gap-2 text-xs text-zinc-400">
+          <div className="flex items-center gap-2 text-xs font-mono text-zinc-400">
             <span>Or try sample:</span>
             <button
               type="button"
@@ -384,14 +363,14 @@ export function InputSection({
                 setGithubUsername(SAMPLE_GITHUB_USERNAME);
                 handleFetchGithub(SAMPLE_GITHUB_USERNAME);
               }}
-              className="px-2.5 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-orange-400 hover:border-orange-500/40 font-mono text-[11px] transition"
+              className="px-2.5 py-0.5 rounded bg-zinc-950 border border-zinc-800 text-orange-400 hover:border-orange-500/50 transition"
             >
               @{SAMPLE_GITHUB_USERNAME}
             </button>
           </div>
 
           {githubError && (
-            <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300">
+            <div className="flex items-center gap-2 p-3 text-xs rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 font-mono">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{githubError}</span>
             </div>
@@ -399,54 +378,54 @@ export function InputSection({
 
           {/* GitHub Profile preview card */}
           {githubResult && (
-            <div className="p-4 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-3">
+            <div className="p-4 bg-black border border-zinc-800 rounded-xl space-y-3 font-mono">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={githubResult.profile.avatar_url}
                     alt={githubResult.profile.login}
-                    className="w-11 h-11 rounded-full border border-zinc-700"
+                    className="w-10 h-10 rounded-full border border-zinc-700"
                   />
                   <div>
-                    <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
+                    <h4 className="text-sm font-bold text-white flex items-center gap-1.5 font-sans">
                       {githubResult.profile.name || githubResult.profile.login}
-                      <span className="text-xs font-mono font-normal text-zinc-400">
+                      <span className="text-xs font-mono text-zinc-400 font-normal">
                         @{githubResult.profile.login}
                       </span>
                     </h4>
-                    <p className="text-xs text-zinc-400 line-clamp-1">
-                      {githubResult.profile.bio || 'No public bio'}
+                    <p className="text-xs text-zinc-400 line-clamp-1 font-sans">
+                      {githubResult.profile.bio || 'No public bio written'}
                     </p>
                   </div>
                 </div>
 
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Ready to Roast
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  READY
                 </span>
               </div>
 
               {/* Stats badges */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800/80 text-center">
-                <div className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/60">
-                  <div className="text-xs text-zinc-400">Public Repos</div>
-                  <div className="text-sm font-bold text-white font-mono">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800/80 text-center text-xs">
+                <div className="p-2 rounded-lg bg-zinc-950 border border-zinc-800">
+                  <div className="text-[10px] text-zinc-500">PUBLIC REPOS</div>
+                  <div className="text-sm font-bold text-zinc-200">
                     {githubResult.profile.public_repos}
                   </div>
                 </div>
-                <div className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/60">
-                  <div className="text-xs text-zinc-400 flex items-center justify-center gap-1">
-                    <Star className="w-3 h-3 text-amber-400" /> Stars
+                <div className="p-2 rounded-lg bg-zinc-950 border border-zinc-800">
+                  <div className="text-[10px] text-zinc-500 flex items-center justify-center gap-1">
+                    <Star className="w-3 h-3 text-amber-400" /> TOTAL STARS
                   </div>
-                  <div className="text-sm font-bold text-white font-mono">
+                  <div className="text-sm font-bold text-zinc-200">
                     {githubResult.repos.reduce((acc, r) => acc + r.stargazers_count, 0)}
                   </div>
                 </div>
-                <div className="p-2 rounded-xl bg-zinc-900/60 border border-zinc-800/60">
-                  <div className="text-xs text-zinc-400 flex items-center justify-center gap-1">
-                    <GitFork className="w-3 h-3 text-cyan-400" /> Forked
+                <div className="p-2 rounded-lg bg-zinc-950 border border-zinc-800">
+                  <div className="text-[10px] text-zinc-500 flex items-center justify-center gap-1">
+                    <GitFork className="w-3 h-3 text-cyan-400" /> FORKED
                   </div>
-                  <div className="text-sm font-bold text-white font-mono">
+                  <div className="text-sm font-bold text-zinc-200">
                     {githubResult.repos.filter((r) => r.fork).length}
                   </div>
                 </div>
@@ -456,20 +435,20 @@ export function InputSection({
         </div>
       )}
 
-      {/* Tab 3: Sample Tier-3 Resume */}
+      {/* Tab 3: Sample Tier-3 Student Resume */}
       {activeTab === 'sample' && (
-        <div className="p-5 bg-gradient-to-br from-amber-950/20 via-zinc-950 to-zinc-950 border border-amber-500/30 rounded-2xl space-y-4">
+        <div className="p-4 sm:p-5 bg-gradient-to-br from-amber-950/20 via-zinc-950 to-black border border-amber-500/40 rounded-xl space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
+              <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white">
-                  Rahul Sharma - Aspiring Full Stack Developer
+                <h4 className="text-sm font-bold text-white tracking-tight">
+                  Rahul Sharma - Tier-3 SDE Candidate
                 </h4>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  7.18 CGPA | VTU Affiliated | Turbo C++ & MS Office | 2 Backlogs Cleared
+                <p className="text-xs text-zinc-400 font-mono mt-0.5">
+                  7.18 CGPA | VTU College | Turbo C++ | 2-Day GenAI Workshop
                 </p>
               </div>
             </div>
@@ -477,31 +456,27 @@ export function InputSection({
             <button
               type="button"
               onClick={onOpenSampleModal}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-200 border border-zinc-700 transition shrink-0"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-mono font-semibold text-zinc-200 border border-zinc-700 transition shrink-0"
             >
               <BookOpen className="w-3.5 h-3.5 text-amber-400" />
-              View Full Resume
+              Inspect Full Text
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-            <div className="p-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800/80">
-              <span className="text-amber-400 font-bold block mb-0.5">Major Project</span>
-              <span className="text-zinc-300">C++ Library Management System using text file handling</span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+            <div className="p-2.5 rounded-lg bg-black/60 border border-zinc-800">
+              <span className="text-amber-400 font-bold block mb-0.5 text-[10px]">MAJOR PROJECT</span>
+              <span className="text-zinc-300 font-sans text-xs">C++ Library System using plaintext file storage</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800/80">
-              <span className="text-amber-400 font-bold block mb-0.5">Headline Web App</span>
-              <span className="text-zinc-300">Responsive Calculator & OpenWeatherMap API</span>
+            <div className="p-2.5 rounded-lg bg-black/60 border border-zinc-800">
+              <span className="text-amber-400 font-bold block mb-0.5 text-[10px]">FLAGSHIP WEB APP</span>
+              <span className="text-zinc-300 font-sans text-xs">React Calculator &amp; OpenWeatherMap free API</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-zinc-900/70 border border-zinc-800/80">
-              <span className="text-amber-400 font-bold block mb-0.5">Certifications</span>
-              <span className="text-zinc-300">2-Day National GenAI Workshop by IITian trainer</span>
+            <div className="p-2.5 rounded-lg bg-black/60 border border-zinc-800">
+              <span className="text-amber-400 font-bold block mb-0.5 text-[10px]">CERTIFICATIONS</span>
+              <span className="text-zinc-300 font-sans text-xs">2-Day National GenAI Workshop by IITian trainer</span>
             </div>
           </div>
-
-          <p className="text-[11px] text-zinc-400 italic">
-            💡 This sample is pre-loaded with every classic tier-3 student trope. Hit &quot;Roast Profile&quot; below for an immediate roast!
-          </p>
         </div>
       )}
 
@@ -511,30 +486,14 @@ export function InputSection({
           type="button"
           disabled={!isReadyToRoast || isLoading}
           onClick={handleRoast}
-          className={`w-full relative group overflow-hidden py-4 px-6 rounded-2xl font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl transition-all duration-300 ${
+          className={`w-full py-4 px-6 rounded-xl font-mono text-xs sm:text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-2xl transition-all duration-200 ${
             isReadyToRoast && !isLoading
-              ? 'bg-gradient-to-r from-orange-600 via-amber-600 to-rose-600 hover:from-orange-500 hover:via-amber-500 hover:to-rose-500 text-white shadow-orange-600/30 hover:scale-[1.01] active:scale-[0.99] cursor-pointer'
-              : 'bg-zinc-800/70 text-zinc-500 cursor-not-allowed border border-zinc-800'
+              ? 'bg-gradient-to-r from-orange-500 via-orange-600 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-orange-500/20 hover:scale-[1.005] active:scale-[0.99] cursor-pointer'
+              : 'bg-zinc-800/60 text-zinc-500 cursor-not-allowed border border-zinc-800'
           }`}
         >
-          {isLoading ? (
-            <div className="flex flex-col items-center gap-1.5 py-1">
-              <div className="flex items-center gap-2 text-white">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="text-sm font-bold tracking-normal normal-case">
-                  Roasting in Progress...
-                </span>
-              </div>
-              <p className="text-xs text-orange-200/90 font-mono font-normal normal-case animate-pulse">
-                {ROAST_LOADING_STEPS[loadingStepIndex]}
-              </p>
-            </div>
-          ) : (
-            <>
-              <Flame className="w-5 h-5 text-amber-300 group-hover:scale-125 transition-transform" />
-              <span>Roast This Profile Now 🔥</span>
-            </>
-          )}
+          <Flame className="w-4 h-4 text-amber-300" />
+          <span>Execute Brutal Roast Now 🔥</span>
         </button>
       </div>
     </div>

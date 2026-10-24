@@ -12,6 +12,8 @@ export interface PersonaInfo {
   bgGlow: string;
   description: string;
   sampleQuote: string;
+  spiceLevel: string;
+  characterClass: string;
 }
 
 export interface BulletRewrite {
