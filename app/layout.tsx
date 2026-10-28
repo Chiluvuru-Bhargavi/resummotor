@@ -47,9 +47,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${ibmPlexMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#09090B] bg-zinc-950 text-neutral-50 selection:bg-orange-500 selection:text-white">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-[#09090B] bg-zinc-950 text-neutral-50 selection:bg-orange-500 selection:text-white"
+      >
         {children}
       </body>
     </html>
