@@ -5,17 +5,17 @@ import { PersonaId } from '@/lib/types';
 import { PERSONAS } from '@/lib/personas';
 import { Briefcase, Terminal, Code2, GraduationCap, Flame } from 'lucide-react';
 
-interface PersonaSelectorProps {
+interface PersonaGridProps {
   selectedPersona: PersonaId;
   onSelectPersona: (id: PersonaId) => void;
   disabled?: boolean;
 }
 
-export function PersonaSelector({
+export default function PersonaGrid({
   selectedPersona,
   onSelectPersona,
   disabled = false,
-}: PersonaSelectorProps) {
+}: PersonaGridProps) {
   const personaList = Object.values(PERSONAS);
 
   const getPersonaIcon = (id: PersonaId, isSelected: boolean) => {
@@ -46,7 +46,7 @@ export function PersonaSelector({
       {/* SECTION HEADER */}
       <div className="flex items-center justify-between">
         <div className="text-orange-500 text-xs font-normal font-['IBM_Plex_Mono'] uppercase tracking-widest flex items-center gap-2">
-          <span>01 / SELECT YOUR ROAST PERSONA</span>
+          <span>01 / CHOOSE YOUR DESTROYER</span>
         </div>
         <div className="text-zinc-500 text-xs font-['IBM_Plex_Mono'] hidden sm:block">
           [ 4 EXECUTIONERS AVAILABLE ]
@@ -122,3 +122,5 @@ export function PersonaSelector({
     </div>
   );
 }
+
+export { PersonaGrid };

@@ -8,20 +8,19 @@ import {
   AlertCircle,
   Loader2,
   Flame,
-  ArrowRight,
-  Star,
-  GitFork,
   ChevronDown,
   ChevronUp,
+  Star,
+  GitFork,
 } from 'lucide-react';
 import { GithubIcon } from '@/components/BrandIcons';
 import { extractTextFromPdf } from '@/lib/pdf-parser';
 import { fetchGitHubSummary, FormattedGitHubResult } from '@/lib/github';
-import { SAMPLE_TIER3_RESUME_TEXT, SAMPLE_GITHUB_USERNAME } from '@/lib/sample-data';
+import { SAMPLE_GITHUB_USERNAME } from '@/lib/sample-data';
 
 export type InputMode = 'pdf' | 'github' | 'sample';
 
-interface InputSectionProps {
+interface UploadZoneProps {
   onRoastTrigger: (data: {
     text: string;
     sourceType: InputMode;
@@ -31,11 +30,11 @@ interface InputSectionProps {
   onOpenSampleModal?: () => void;
 }
 
-export function InputSection({
+export default function UploadZone({
   onRoastTrigger,
   isLoading,
   onOpenSampleModal,
-}: InputSectionProps) {
+}: UploadZoneProps) {
   const [activeTab, setActiveTab] = useState<'pdf' | 'github'>('pdf');
 
   // PDF State
@@ -268,7 +267,7 @@ export function InputSection({
               <button
                 type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="text-zinc-400 hover:text-orange-400 flex items-center gap-1 transition"
+                className="text-zinc-400 hover:text-orange-400 flex items-center gap-1 transition cursor-pointer"
               >
                 {showPreview ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
                 {showPreview ? 'Hide Raw Extracted Stream' : 'Inspect Raw Extracted Stream'}
@@ -423,3 +422,5 @@ export function InputSection({
     </div>
   );
 }
+
+export { UploadZone };
