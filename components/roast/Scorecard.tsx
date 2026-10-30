@@ -13,7 +13,9 @@ import {
 } from 'lucide-react';
 import { TwitterXIcon } from '@/components/BrandIcons';
 import { generateScorecardCanvasPng } from '@/lib/canvas-scorecard';
-import GitDiffFixer from './GitDiffFixer';
+import dynamic from 'next/dynamic';
+
+const GitDiffFixer = dynamic(() => import('./GitDiffFixer'), { ssr: false });
 
 interface ScorecardProps {
   roast: RoastResult;

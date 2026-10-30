@@ -1,18 +1,26 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/roast/HeroSection';
 import PersonaGrid from '@/components/roast/PersonaGrid';
-import UploadZone, { InputMode } from '@/components/roast/UploadZone';
-import Scorecard from '@/components/roast/Scorecard';
+import type { InputMode } from '@/components/roast/UploadZone';
 import { TerminalLoader } from '@/components/TerminalLoader';
 import { ApiKeyModal } from '@/components/ApiKeyModal';
 import { SampleResumePreviewModal } from '@/components/SampleResumePreviewModal';
 import { PersonaId, RoastResult } from '@/lib/types';
 import { SAMPLE_TIER3_RESUME_TEXT } from '@/lib/sample-data';
 import { AlertCircle } from 'lucide-react';
+
+const UploadZone = dynamic(() => import('@/components/roast/UploadZone'), {
+  ssr: false,
+});
+
+const Scorecard = dynamic(() => import('@/components/roast/Scorecard'), {
+  ssr: false,
+});
 
 export default function HomePage() {
   const [selectedPersona, setSelectedPersona] = useState<PersonaId>('mass-recruiter');
