@@ -4,11 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npx @opennextjs/cloudflare build",
     "start": "next start",
-    "lint": "eslint",
-    "deploy": "NEXT_TELEMETRY_DISABLED=1 opennextjs-cloudflare build && opennextjs-cloudflare deploy",
-    "preview": "NEXT_TELEMETRY_DISABLED=1 opennextjs-cloudflare build && opennextjs-cloudflare preview"
+    "lint": "next lint"
   },
   "dependencies": {
     "@google/genai": "^2.31.0",
