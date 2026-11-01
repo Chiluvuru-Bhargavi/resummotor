@@ -9,6 +9,10 @@ export async function generateScorecardCanvasPng(
   personaName: string,
   candidateName: string = 'Candidate'
 ): Promise<string> {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    throw new Error('Canvas scorecard generation is only supported in the browser.');
+  }
+
   const width = 1080;
   const height = 1350;
 

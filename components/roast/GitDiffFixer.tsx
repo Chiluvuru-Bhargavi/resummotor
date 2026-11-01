@@ -18,7 +18,9 @@ export default function GitDiffFixer({ bulletFixes }: GitDiffFixerProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const handleCopyRewrite = (text: string, index: number) => {
-    navigator.clipboard.writeText(text);
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+    }
     setCopiedIndex(index);
     setTimeout(() => setCopiedIndex(null), 2000);
   };
