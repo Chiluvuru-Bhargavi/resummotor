@@ -33,11 +33,12 @@ export default function HomePage() {
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
   const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
   const [customApiKey, setCustomApiKey] = useState<string>('');
+  const [dailyCount, setDailyCount] = useState<number>(0);
 
   const scorecardSectionRef = useRef<HTMLDivElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
-  // Load custom API key from localStorage on mount
+  // Load custom API key and sync daily real roast counter on mount
   useEffect(() => {
     try {
       const savedKey = localStorage.getItem('cookedresume_gemini_key') || '';
@@ -45,6 +46,41 @@ export default function HomePage() {
     } catch {
       // Ignore
     }
+
+    // Check today's date and reset to 0 if a new calendar day has started
+    const today = new Date().toLocaleDateString('en-CA');
+    try {
+      const stored = localStorage.getItem('cookedresume_daily_stats');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.date === today && typeof parsed.count === 'number') {
+          setDailyCount(parsed.count);
+        } else {
+          // A brand new day starts from 0!
+          localStorage.setItem('cookedresume_daily_stats', JSON.stringify({ date: today, count: 0 }));
+          setDailyCount(0);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+
+    // Fetch live synchronized count from API
+    fetch('/api/counter')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && typeof data.count === 'number') {
+          const currentDate = data.date || today;
+          setDailyCount((prev) => {
+            const next = Math.max(prev, data.count);
+            try {
+              localStorage.setItem('cookedresume_daily_stats', JSON.stringify({ date: currentDate, count: next }));
+            } catch {}
+            return next;
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const handleSaveApiKey = (key: string) => {
@@ -97,8 +133,20 @@ export default function HomePage() {
         throw new Error(errorData.error || `Roast request failed with status ${response.status}`);
       }
 
-      const data: RoastResult = await response.json();
+      const data: RoastResult & { dailyRoastsToday?: number } = await response.json();
       setRoastResult(data);
+
+      // Increment live daily roast counter
+      setDailyCount((prev) => {
+        const today = new Date().toLocaleDateString('en-CA');
+        const next = typeof data.dailyRoastsToday === 'number' ? data.dailyRoastsToday : prev + 1;
+        try {
+          localStorage.setItem('cookedresume_daily_stats', JSON.stringify({ date: today, count: next }));
+        } catch {
+          // Ignore
+        }
+        return next;
+      });
 
       // Smooth scroll to 03 / DAMAGE REPORT
       setTimeout(() => {
@@ -153,7 +201,7 @@ export default function HomePage() {
       />
 
       {/* 2. HERO SECTION */}
-      <HeroSection />
+      <HeroSection count={dailyCount} />
 
       {/* 3. MAIN CONTENT CONTAINER */}
       <main className="self-stretch px-6 md:px-16 pb-20 flex flex-col gap-10 w-full">

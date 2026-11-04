@@ -5,6 +5,7 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { PersonaId, RoastRequest, RoastResult } from '@/lib/types';
 import { PERSONAS, PERSONA_PROMPTS } from '@/lib/personas';
 import { generateHeuristicRoast } from '@/lib/fallback-roaster';
+import { incrementDailyCount, getDailyCount } from '@/lib/daily-counter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,9 +32,12 @@ export async function POST(req: NextRequest) {
     // If no API key is provided, gracefully use the dynamic heuristic roast engine
     if (!apiKey) {
       console.log('No GEMINI_API_KEY found, using high-fidelity heuristic fallback roast engine.');
+      incrementDailyCount();
+      const currentStats = getDailyCount();
       const fallbackRoast = generateHeuristicRoast(text, personaId, targetName, sourceType);
       return NextResponse.json({
         ...fallbackRoast,
+        dailyRoastsToday: currentStats.count,
         isAIGenerated: false,
         note: 'Generated using local Indian tech roast engine (Add a Gemini API key for live LLM customization)',
       });
@@ -177,6 +181,10 @@ INSTRUCTIONS:
 
       const parsed: any = JSON.parse(responseText);
 
+      // Increment server daily roast counter
+      incrementDailyCount();
+      const currentStats = getDailyCount();
+
       // Add compatibility fields
       const result: RoastResult = {
         ...parsed,
@@ -194,12 +202,18 @@ INSTRUCTIONS:
         isAIGenerated: true,
       };
 
-      return NextResponse.json(result);
+      return NextResponse.json({
+        ...result,
+        dailyRoastsToday: currentStats.count,
+      });
     } catch (apiError: any) {
       console.warn('Gemini API call failed, falling back to heuristic roaster:', apiError?.message || apiError);
+      incrementDailyCount();
+      const currentStats = getDailyCount();
       const fallbackRoast = generateHeuristicRoast(text, personaId, targetName, sourceType);
       return NextResponse.json({
         ...fallbackRoast,
+        dailyRoastsToday: currentStats.count,
         isAIGenerated: false,
         note: `API error encountered (${apiError?.message || 'Rate limit/Quota'}), served via intelligent fallback engine.`,
       });
