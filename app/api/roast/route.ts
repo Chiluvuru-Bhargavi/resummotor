@@ -55,14 +55,32 @@ ${personaSystemPrompt}
 CONTENT TO ROAST:
 ${text.slice(0, 8000)}
 
+REALISTIC SCORING & CTC CALIBRATION RULES (DO NOT USE HARDCODED DEFAULTS):
+- TIER 1: TRULY TERRIBLE / GHOST / ZERO-EFFORT (0-2 repos, 0 stars, 0 followers, all forked repos, or empty/lazy resume):
+  * "cookedPercentage": MUST BE 93 to 99 (Completely incinerated).
+  * "predictedCTC": MUST BE brutal and low (e.g. "₹0 (ATS Auto-Reject in 0.1s)", "₹1.8 LPA (Non-Voice BPO Night Shift)", "₹0 (Unpaid 16-Hour Intern)", "Debarred by TPO (0 Offers)").
+  * "delusionLevel": "EXTREME".
+- TIER 2: TUTORIAL HELL / WEAK (calculator, todo, weather app, clones, no metrics, 0-2 stars, basic college tasks):
+  * "cookedPercentage": MUST BE 78 to 91.
+  * "predictedCTC": ₹2.8 LPA to ₹4.5 LPA (e.g. "₹3.36 LPA (2-Yr Bond)", "₹3.6 LPA + Unlimited ESOPs (Worth ₹0)").
+  * "delusionLevel": "HIGH".
+- TIER 3: AVERAGE / EMPLOYABLE (real projects, clean code, some stars or work experience, decent tech stack):
+  * "cookedPercentage": MUST BE 45 to 68.
+  * "predictedCTC": ₹8 LPA to ₹16 LPA (e.g. "₹12 LPA (Junior SDE)", "₹10 LPA + ESOPs").
+  * "delusionLevel": "MODERATE" or "LOW".
+- TIER 4: TRULY CRACKED / ROCKSTAR (high stars 30+, open source tools, Go/Rust/Docker/K8s/System Design, high LeetCode rating, production scale metrics):
+  * "cookedPercentage": MUST BE 10 to 30 (Barely cooked / Actually cracked).
+  * "predictedCTC": ₹25 LPA to ₹50+ LPA (e.g. "₹38 LPA (L4 SDE-2)", "₹32 LPA + 0.25% Equity").
+  * "delusionLevel": "LOW".
+
 INSTRUCTIONS:
-1. "cookedPercentage": Integer from 0 to 100 representing how cooked/doomed this profile is.
-2. "verdictBadge": A punchy, capitalised 3-5 word Indian tech verdict (e.g. "CERTIFIED TUTORIAL HELL", "MASS RECRUITER BAIT", "ACTUALLY CRACKED", "NOTICE PERIOD FUGITIVE").
-3. "predictedCTC": A hilarious Indian tech salary prediction (e.g. "₹3.36 LPA (2-Yr Bond)", "₹4.5 LPA + Beanbag", "₹18 LPA + 0.001% ESOPs", "Debarred by TPO").
+1. "cookedPercentage": Integer from 0 to 100 adhering strictly to the calibration tiers above.
+2. "verdictBadge": A punchy, capitalised 3-5 word Indian tech verdict reflecting the true tier.
+3. "predictedCTC": A hilarious, realistic Indian tech salary prediction matching the candidate's actual quality and persona.
 4. "delusionLevel": One of "EXTREME", "HIGH", "MODERATE", "LOW".
-5. "roastParagraph": Exactly 1 brutal, funny Hinglish/Indian tech roast paragraph in your persona's distinctive voice.
-6. "redFlags": Exactly 3 short, brutal one-liners.
-7. "greenFlags": Exactly 2 things that are actually decent.
+5. "roastParagraph": Exactly 1 brutal, funny Hinglish/Indian tech roast paragraph in your persona's distinctive voice, directly referencing actual data found (or missing) in the profile.
+6. "redFlags": Exactly 3 short, brutal one-liners specific to this candidate.
+7. "greenFlags": Exactly 2 genuine or funny positive observations.
 8. "bulletFixes": Exactly 3 objects containing { "weakOriginal": string, "strongRewrite": string, "reason": string } fixing weak lines with quantified action metrics (STAR format).
 `;
 
