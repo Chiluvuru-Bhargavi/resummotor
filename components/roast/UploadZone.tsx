@@ -140,7 +140,7 @@ export default function UploadZone({
     (activeTab === 'github' && !!githubResult && !isFetchingGithub);
 
   return (
-    <div className="w-full max-w-[900px] mx-auto bg-gradient-to-br from-stone-800/60 via-zinc-900/90 to-stone-900/60 rounded-lg outline outline-1 outline-orange-500/60 backdrop-blur-md p-6 md:p-8 flex flex-col gap-6 shadow-2xl">
+    <div className="w-full max-w-[900px] mx-auto bg-[#0a0a0c] border border-zinc-800/80 rounded-lg outline outline-1 outline-orange-500/40 p-6 md:p-8 flex flex-col gap-6 shadow-2xl">
       {/* 02 / FEED THE FIRE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-5">
         <div>
@@ -156,7 +156,7 @@ export default function UploadZone({
         </div>
 
         {/* Tab switcher */}
-        <div className="flex items-center p-1 bg-zinc-950 border border-zinc-800 rounded-md self-start sm:self-auto font-['IBM_Plex_Mono']">
+        <div className="flex items-center p-1 bg-black border border-zinc-800 rounded-md self-start sm:self-auto font-['IBM_Plex_Mono']">
           <button
             type="button"
             onClick={() => setActiveTab('pdf')}
@@ -207,12 +207,12 @@ export default function UploadZone({
             onDragLeave={() => setIsDragOver(false)}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-lg p-8 sm:p-10 flex flex-col items-center justify-center gap-3 bg-zinc-950/40 cursor-pointer transition ${
+            className={`border-2 border-dashed rounded-lg p-8 sm:p-10 flex flex-col items-center justify-center gap-3 bg-black/60 cursor-pointer transition ${
               isDragOver
                 ? 'border-orange-500 bg-orange-500/10'
                 : pdfText
                 ? 'border-emerald-500/60 bg-emerald-950/20'
-                : 'border-zinc-700 hover:border-orange-500/80 hover:bg-zinc-950/70'
+                : 'border-zinc-800 hover:border-orange-500/80 hover:bg-black/80'
             }`}
           >
             {isExtractingPdf ? (

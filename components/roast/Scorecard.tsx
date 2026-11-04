@@ -125,7 +125,7 @@ export default function Scorecard({
         <div className="lg:col-span-5 flex flex-col gap-4">
           <div
             id="cooked-scorecard-element"
-            className="w-full bg-zinc-900 outline outline-1 outline-orange-500/80 rounded-lg p-6 shadow-[0px_0px_35px_0px_rgba(249,115,22,0.15)] flex flex-col gap-5 relative overflow-hidden"
+            className="w-full bg-[#0a0a0c] border border-zinc-800/80 outline outline-1 outline-orange-500/80 rounded-lg p-6 shadow-[0px_0px_35px_0px_rgba(249,115,22,0.15)] flex flex-col gap-5 relative overflow-hidden"
           >
             {/* Top row: Name + Persona Badge */}
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
@@ -197,7 +197,7 @@ export default function Scorecard({
               </div>
 
               {/* Bold Verdict Badge */}
-              <div className="mt-3 px-3 py-1.5 rounded-md bg-zinc-950 border border-zinc-700/80 shadow-md">
+              <div className="mt-3 px-3 py-1.5 rounded-md bg-black border border-zinc-800 shadow-md">
                 <span className="text-xs font-extrabold font-['Inter'] tracking-tight text-neutral-50">
                   &ldquo;{roast.verdictBadge || roast.verdictTitle}&rdquo;
                 </span>
@@ -206,7 +206,7 @@ export default function Scorecard({
 
             {/* Metric Box: 2-Column Monospace Grid */}
             <div className="grid grid-cols-2 gap-2.5 font-['IBM_Plex_Mono']">
-              <div className="p-3 rounded-md bg-zinc-950 border border-zinc-800">
+              <div className="p-3 rounded-md bg-black border border-zinc-800/80">
                 <span className="text-[9px] uppercase tracking-wider text-zinc-500 block mb-0.5">
                   PREDICTED CTC
                 </span>
@@ -215,7 +215,7 @@ export default function Scorecard({
                 </span>
               </div>
 
-              <div className="p-3 rounded-md bg-zinc-950 border border-zinc-800">
+              <div className="p-3 rounded-md bg-black border border-zinc-800/80">
                 <span className="text-[9px] uppercase tracking-wider text-zinc-500 block mb-0.5">
                   DELUSION LEVEL
                 </span>
@@ -226,7 +226,7 @@ export default function Scorecard({
             </div>
 
             {/* Roast Paragraph */}
-            <p className="p-3.5 rounded-md bg-zinc-950/70 border border-zinc-800 text-xs italic font-normal font-['Inter'] text-zinc-300 leading-relaxed">
+            <p className="p-3.5 rounded-md bg-black/80 border border-zinc-800/80 text-xs italic font-normal font-['Inter'] text-zinc-300 leading-relaxed">
               &ldquo;{roast.roastParagraph || roast.roastSummary}&rdquo;
             </p>
 
@@ -238,7 +238,7 @@ export default function Scorecard({
               {roast.redFlags.map((flag, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-2 p-2 rounded bg-zinc-950 border border-red-500/20 text-xs font-['Inter'] text-zinc-300"
+                  className="flex items-start gap-2 p-2 rounded bg-black border border-red-500/20 text-xs font-['Inter'] text-zinc-300"
                 >
                   <span className="text-red-500 text-xs shrink-0 select-none">❌</span>
                   <span className="text-[11px] leading-snug">{flag}</span>

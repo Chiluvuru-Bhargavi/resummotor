@@ -144,7 +144,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="w-full max-w-[1440px] min-h-screen mx-auto bg-zinc-950 flex flex-col justify-start items-start overflow-x-hidden text-neutral-50 selection:bg-orange-500 selection:text-white">
+    <div className="w-full max-w-[1440px] min-h-screen mx-auto bg-black flex flex-col justify-start items-start overflow-x-hidden text-neutral-100 selection:bg-orange-500 selection:text-white">
       {/* 1. TOP NAVBAR */}
       <Navbar
         onLoadSample={loadSampleResume}

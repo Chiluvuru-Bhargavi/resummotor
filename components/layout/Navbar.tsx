@@ -15,7 +15,7 @@ export default function Navbar({
   hasCustomKey = false,
 }: NavbarProps) {
   return (
-    <header className="self-stretch h-20 px-6 md:px-16 border-b border-zinc-800 inline-flex justify-between items-center w-full">
+    <header className="self-stretch h-20 px-6 md:px-16 border-b border-zinc-900 bg-black/90 backdrop-blur-md inline-flex justify-between items-center w-full sticky top-0 z-40">
       {/* Brand / Logo */}
       <div className="flex justify-start items-center gap-2.5">
         <div className="size-8 bg-orange-500 flex justify-center items-center rounded-xs">

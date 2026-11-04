@@ -38,7 +38,7 @@ export default function PersonaGrid({
       if (id === 'faang-bhaiya') return 'bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.6)]';
       return 'bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.6)]';
     }
-    return 'bg-zinc-800';
+    return 'bg-zinc-900';
   };
 
   return (
@@ -66,14 +66,14 @@ export default function PersonaGrid({
               onClick={() => onSelectPersona(p.id)}
               className={`p-5 rounded-lg text-left transition-all duration-200 flex flex-col justify-between gap-4 cursor-pointer ${
                 isSelected
-                  ? 'bg-stone-900 shadow-[0px_0px_28px_0px_rgba(249,115,22,0.15)] outline outline-1 outline-orange-500'
-                  : 'bg-zinc-900 outline outline-1 outline-zinc-800 hover:outline-zinc-700'
+                  ? 'bg-[#14110e] shadow-[0px_0px_24px_0px_rgba(249,115,22,0.18)] outline outline-1 outline-orange-500'
+                  : 'bg-[#0c0c0e] hover:bg-[#111114] outline outline-1 outline-zinc-900 hover:outline-zinc-800'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {/* Header inside card */}
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="size-9 rounded-md bg-zinc-950 border border-zinc-800 flex items-center justify-center">
+                  <div className="size-9 rounded-md bg-black border border-zinc-800/80 flex items-center justify-center">
                     {getPersonaIcon(p.id, isSelected)}
                   </div>
                   {isSelected && (

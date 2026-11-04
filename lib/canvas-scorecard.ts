@@ -26,13 +26,13 @@ export async function generateScorecardCanvasPng(
   }
 
   // 1. Background Fill
-  ctx.fillStyle = '#09090B';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, width, height);
 
   // Subtle radial gradient in the center
   const radialGlow = ctx.createRadialGradient(width / 2, height / 3, 50, width / 2, height / 3, 600);
   radialGlow.addColorStop(0, 'rgba(249, 115, 22, 0.12)');
-  radialGlow.addColorStop(1, 'rgba(9, 9, 11, 0)');
+  radialGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
   ctx.fillStyle = radialGlow;
   ctx.fillRect(0, 0, width, height);
 
@@ -53,7 +53,7 @@ export async function generateScorecardCanvasPng(
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(pad, pad, cardW, cardH, cardR);
-  ctx.fillStyle = '#111115';
+  ctx.fillStyle = '#0a0a0c';
   ctx.fill();
 
   // Neon orange outline
